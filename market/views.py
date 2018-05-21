@@ -75,8 +75,11 @@ def goods_page(request, goods_id):
         user_profile = []
     comment_form = CommentForm()
     goods = Goods.objects.get(pk=goods_id)
+    # record goods' seen times
+    goods.seen_times += 1
+    goods.save()
     comment_list = Comment.objects.filter(goods=goods)
-    context_dic = {'goods':goods,'comments':comment_list,'form':comment_form,'user_profile':user_profile}
+    context_dic = {'goods':goods, 'comments':comment_list,'form': comment_form,'user_profile': user_profile}
     return render(request, 'market/goods.html',context_dic)
 
 
