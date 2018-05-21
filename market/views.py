@@ -121,6 +121,7 @@ def add_goods(request):
             if 'picture' in request.FILES:
                 goods.picture = request.FILES['picture']
             print(goods.picture)
+            goods.seen_times = 0
             goods.save()
             return index(request)
         else:
@@ -154,7 +155,7 @@ def register(request):
     else:
         user_form = UserForm()
         profile_form = UserProfieldForm()
-    return render(request, 'market/register.html',{'user_form': user_form,'profile_form': profile_form,'registered': registered})
+    return render(request, 'market/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
 
 
 def user_login(request):

@@ -32,7 +32,7 @@ class Goods(models.Model):
     discount = models.IntegerField(default=0, blank=True)
     goods_phone = models.IntegerField(null=True, blank=True)
     goods_qq = models.IntegerField(null=True, blank=True)
-    publish_time = models.DateField(auto_now_add=True,null=True,blank=True)
+    publish_time = models.DateField(auto_now_add=True, null=True, blank=True)
     seen_times = models.IntegerField(default=0, blank=False)
 
     def __str__(self):
