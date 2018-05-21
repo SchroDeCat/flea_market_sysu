@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from market.models import Category,Goods,UserProfile,Comment,InstationMessage,User
-from market.forms import UserForm,UserProfieldForm,GoodsForm,CommentForm
-from django.contrib.auth import authenticate,login,logout
-from django.http import HttpResponseRedirect,HttpResponse
+from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User
+from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
-from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from PIL import Image
 
 # Create your views here.
@@ -21,30 +21,33 @@ def index(request):
         message_unread = 0
     category_list = Category.objects.all()
     goods_list = Goods.objects.all().order_by('-publish_time')
-    context_dic = {'categories':category_list,'user_profile':user_profile,\
-                   'goodses':goods_list,'message_unread': message_unread}
-    return render(request, 'market/index.html',context_dic)
+    context_dic = {'categories': category_list,
+                   'user_profile': user_profile,
+                   'goodses': goods_list,
+                   'message_unread': message_unread}
+    return render(request, 'market/index.html', context_dic)
 
 
-def category(request,category_id):
+def category(request, category_id):
     if request.user.is_authenticated:
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
     else:
         user_profile = []
+
     page_list = []
     try:
-        category = Category.objects.get(pk=category_id)
-        name = category.name
+        category_filter = Category.objects.get(pk=category_id)
+        name = category_filter.name
         if request.GET.get('rank'):
             rank = request.GET.get('rank')
-            goodses_list = Goods.objects.filter(category=category).order_by('-'+rank)
+            goodses_list = Goods.objects.filter(category=category_filter).order_by('-'+rank)
         else:
-            goodses_list = Goods.objects.filter(category=category)
+            goodses_list = Goods.objects.filter(category=category_filter)
         # 实现分页功能
-        paginator = Paginator(goodses_list, 12)
+        paginator = Paginator(goodses_list, 12)     # Show 12 items per page
         page = request.GET.get('page')
-        goodses = paginator.page(page)
+        goodses = paginator.page(page)              # goods page
     except Category.DoesNotExist:
         pass
     except PageNotAnInteger:
@@ -52,20 +55,22 @@ def category(request,category_id):
     except EmptyPage:
         goodses = paginator.page(paginator.num_pages)
 
-    for i in range(1,6):
-        order = int((goodses.number-1) / 5)
-        page_list.append(order*5+i)
+    for i in range(1, paginator.num_pages + 1):
+        page_list.append(i)
 
-    context_dic = {'category': category, 'category_name': name, 'goodses': goodses,
-                   'page_list': page_list, 'user_profile': user_profile}
+    context_dic = {'category': category_filter,
+                   'category_name': name,
+                   'goodses': goodses,
+                   'page_list': page_list,
+                   'user_profile': user_profile}
 
-    return render(request, 'market/category.html',context_dic)
+    return render(request, 'market/category.html', context_dic)
 
 
-def goods_page(request,goods_id):
+def goods_page(request, goods_id):
     if request.user.is_authenticated:
         user = request.user
-        user_profile = UserProfile.objects.get(user = user)
+        user_profile = UserProfile.objects.get(user=user)
     else:
         user_profile = []
     comment_form = CommentForm()
@@ -76,7 +81,7 @@ def goods_page(request,goods_id):
 
 
 @login_required
-def add_comment(request,goods_id):
+def add_comment(request, goods_id):
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
@@ -146,7 +151,7 @@ def register(request):
     else:
         user_form = UserForm()
         profile_form = UserProfieldForm()
-    return render(request, 'market/register.html',{'user_form':user_form,'profile_form':profile_form,'registered':registered})
+    return render(request, 'market/register.html',{'user_form': user_form,'profile_form': profile_form,'registered': registered})
 
 
 def user_login(request):
@@ -213,6 +218,6 @@ def display_message(request):
     for mes in messages:
         mes.active = False
         mes.save()
-    context_dic = { 'user_profile': user_profile, 'messages':  messages}
+    context_dic = {'user_profile': user_profile, 'messages':  messages}
     return render(request, 'market/message.html', context_dic)
 
