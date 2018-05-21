@@ -79,8 +79,8 @@ def goods_page(request, goods_id):
     goods.seen_times += 1
     goods.save()
     comment_list = Comment.objects.filter(goods=goods)
-    context_dic = {'goods':goods, 'comments':comment_list,'form': comment_form,'user_profile': user_profile}
-    return render(request, 'market/goods.html',context_dic)
+    context_dic = {'goods': goods, 'comments': comment_list, 'form': comment_form, 'user_profile': user_profile}
+    return render(request, 'market/goods.html', context_dic)
 
 
 @login_required
@@ -128,7 +128,7 @@ def add_goods(request):
     else:
         goods_form = GoodsForm()
 
-    return render(request, 'market/add_goods.html',{'form':goods_form})
+    return render(request, 'market/add_goods.html', {'form':goods_form})
 
 
 def register(request):
@@ -188,7 +188,7 @@ def user_logout(request):
     return HttpResponseRedirect('/market/')
 
 
-def profile(request,user_id):
+def profile(request, user_id):
     if request.user.is_authenticated:
         user = request.user
         user_profile = UserProfile.objects.get(user = user)
@@ -197,21 +197,22 @@ def profile(request,user_id):
     user = User.objects.get(pk=user_id)
     user = UserProfile.objects.get(user=user)
     goodses = Goods.objects.filter(seller=user)
-    context_dic = {'profile':user,'user_profile':user_profile,'goodses':goodses}
+    context_dic = {'profile': user, 'user_profile': user_profile, 'goodses': goodses}
     return render(request, 'market/profile.html',context_dic)
 
 
 def search(request):
     if request.user.is_authenticated:
         user = request.user
-        user_profile = UserProfile.objects.get(user = user)
+        user_profile = UserProfile.objects.get(user=user)
     else:
         user_profile = []
         key_word = request.GET.get('keyword')
         category_list = Category.objects.all()
         goods_list = Goods.objects.filter(name__icontains=key_word)
-        context_dic = {'categories':category_list,'user_profile':user_profile,'goodses':goods_list}
-        return render(request, 'market/index.html',context_dic)
+        context_dic = {'categories': category_list, 'user_profile': user_profile, 'goodses': goods_list}
+        return render(request, 'market/index.html', context_dic)
+
 
 @login_required
 def display_message(request):
