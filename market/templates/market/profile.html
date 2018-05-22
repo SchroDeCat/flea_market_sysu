@@ -10,7 +10,8 @@
                     <div class="name">{{ profile.user.username }}<img class="grade_prof" src="http://ershou.u.qiniudn.com/ico_lv4.png" alt="等级"></div>
                     <p class="has_sell">已卖出<span>5</span>件商品</p>
                     <ul class="seller_attr">
-                        <li>中山大学 计算机专业2015级</li>
+                        <li>校区：{% if profile.campus %} {{ profile.campus }} {% else %} 未知 {% endif %}</li>
+                        <li>年级：{% if profile.grade %} {{ profile.grade }}  {% else %}  未知 {% endif %}</li>
                     </ul>
                 </div>
                 <div id="user_photo">
