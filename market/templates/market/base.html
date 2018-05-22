@@ -29,6 +29,20 @@
       <!--<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">-->
       <!--<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap-theme.css">-->
       <!--<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap-theme.min.css">-->
+    <style type="text/css">
+    	.item .info .name{
+    	   margin-left:0px;
+    	   padding-left:0px;
+    	}
+
+    	.item .info {
+    		padding-left:0px;
+    		border-left:0px;
+    	}
+      #user_name {
+        font-weight: 700;
+      }
+    </style>
   </head>
 
   <body>
@@ -51,7 +65,7 @@
                <li>
                    <div class="search-box-wr ease2">
                     <form class="search-box center" action="{% url 'search' %}" method="get">
-                        <button type="submit" class="search-submit">搜索</button>
+                        <button type="submit" class=".search-submit">搜索</button>
                         <div class="input-wr">
                             <img class="search-icon" src="{% static 'images/search.png' %}"/>
                             <div class="search-input">

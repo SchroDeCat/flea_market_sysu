@@ -8,16 +8,38 @@
       <!--<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">-->
       <link href="https://v3.bootcss.com/examples/dashboard/dashboard.css" rel="stylesheet">
     <!--<link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">-->
+        <style type="text/css">
+            body{
+                background-color:#383841; 
+
+            }
+            #regheader{
+                background-color: #DBDBDB;
+                font-size: 2em;
+                text-align: center;
+                border-bottom:solid 1px #AAA;  
+                border-top-right-radius: 15px;
+                border-top-left-radius: 15px;
+            }
+
+        </style>
+
     </head>
 
     <body>
-    <div class="container-fluid">
+    <div class="container">
+        <div class = "row">
+            <div class = "col-md-2"></div>
+            <div class="col-md-8" id = "regheader" >用户注册</div>
+            <div class = "col-md-2"></div>
+            
+        </div>
       <div class="row">
         <div class="col-md-2">
 
         </div>
 
-        <div class="col-md-8  main" style="background-color: #D3D3D3">
+        <div class="col-md-8  main" style="background-color: #F9F9F9;border-bottom-left-radius:15px;border-bottom-right-radius:15px ">
             {% if registered %}
             <strong>thank you for registering!</strong>
             <a href="{% url 'index' %}">Return to the homepage.</a><br />

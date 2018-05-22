@@ -10,7 +10,7 @@
     list-style: none;
     text-align: justify;
     text-justify: distribute-all-lines;
-    text-align-last: justify;
+    /*text-align-last: justify;*/
 }
 
 .items:after {
@@ -114,7 +114,7 @@
 }
 
 .info .place {
-    text-align: right;
+    text-align: left;
 }
 
 .info .school{
