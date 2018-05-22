@@ -5,7 +5,7 @@
 {% block body_block %}
 
     {% if user.is_authenticated %}
-    <h1>{{ user.username }}!Welcome to SYSU FleaMarket! </h1>
+    <h1><span id = "user_name">{{ user.username }}</span>!&nbsp;Welcome to SYSU FleaMarket! </h1>
     {% else %}
     <h1>Welcome to SYSU FleaMarket!</h1>
     {% endif %}
