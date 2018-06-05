@@ -1,7 +1,10 @@
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer,SignatureExpired
+from itsdangerous import BadSignature,SignatureExpired
 
 class Category(models.Model):
     name = models.CharField(max_length=32,unique=True)
@@ -23,6 +26,28 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+    #create activating code
+    def generate_activate_token(self,expires_in=3600):
+        s = Serializer(settings.SECRET_KEY,expires_in)
+        return s.dumps({'id':self.user.id})
+
+    #check activating code
+    @staticmethod
+    def check_activate_token(token):
+        s = Serializer(settings.SECRET_KEY)
+        try:
+            data=s.loads(token)
+        except BadSignature:
+            return '激活码错误'
+        except SignatureExpired:
+            return '激活超时，请重新注册'
+        user = User.objects.filter(id=data.get('id'))[0]
+        if not user:
+            return 'no this user'
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+        return '激活成功请跳转登陆'
 
 class Goods(models.Model):
     name = models.CharField(max_length=128)

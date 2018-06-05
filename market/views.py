@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User
 from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
+from market.email import  send_activate_mail
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from PIL import Image
+
+
 
 # Create your views here.
 
@@ -141,6 +145,8 @@ def register(request):
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
+            #用户未激活
+            user.is_active=False
             user.save()
             profile = profile_form.save(commit=False)
             profile.user = user
@@ -149,7 +155,11 @@ def register(request):
             profile.save()
             registered = True
 
-            return user_login(request)
+            email = user.email
+            username = user.username
+            token = profile.generate_activate_token().decode('utf-8')
+            send_activate_mail(request,email,'激活账号','market/activate_content',token=token,username=username)
+            return activate(request)
         else:
             print(user_form.errors,profile_form.errors)
     else:
@@ -162,18 +172,17 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username,password=password)
 
+        user = User.objects.filter(username=username)
         if user:
-            if user.is_active:
+            user = user[0]
+            if not user.is_active:
+                return render(request, 'market/activate.html', {'message': "请尽快完成激活"})
+            user = authenticate(username=username, password=password)
+            if user:
                 login(request,user)
                 return HttpResponseRedirect('/market/')
-            else:
-                return HttpResponse("Your account is disabled.")
-        else:
-            print("Invid login details:{0},{1}".format(username,password))
-            return HttpResponse("Invalid login details supplied.")
-
+        return render(request, 'market/login.html',{'failed':'用户名或密码错误'})
     else:
         return render(request, 'market/login.html',{})
 
@@ -225,4 +234,13 @@ def display_message(request):
         mes.save()
     context_dic = {'user_profile': user_profile, 'messages':  messages}
     return render(request, 'market/message.html', context_dic)
+
+
+def activate(request):
+    if( 'token' in request.GET ):
+        token = request.GET['token']
+        result = UserProfile.check_activate_token(token)
+    else:
+        result = '请尽快完成激活'
+    return render(request,'market/activate.html',{'message':result})
 

@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^profile/(?P<user_id>[\w\-]+)',       views.profile, name='profile'),
     url(r'^search',                             views.search, name='search'),
     url(r'^message/',                           views.display_message, name='message'),
+    url(r'^activate/',                          views.activate,name='activate'),
 ]   
 

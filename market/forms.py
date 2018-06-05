@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from market.models import Category,Goods,UserProfile,Comment
 
 
+
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
@@ -39,5 +40,4 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('content',)
-
 
