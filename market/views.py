@@ -212,16 +212,12 @@ def profile(request, user_id):
 
 
 def search(request):
-    if request.user.is_authenticated:
-        user = request.user
-        user_profile = UserProfile.objects.get(user=user)
-    else:
-        user_profile = []
-        key_word = request.GET.get('keyword')
-        category_list = Category.objects.all()
-        goods_list = Goods.objects.filter(name__icontains=key_word)
-        context_dic = {'categories': category_list, 'user_profile': user_profile, 'goodses': goods_list}
-        return render(request, 'market/index.html', context_dic)
+    user_profile = []
+    key_word = request.GET.get('keyword')
+    category_list = Category.objects.all()
+    goods_list = Goods.objects.filter(name__icontains=key_word)
+    context_dic = {'categories': category_list, 'user_profile': user_profile, 'goodses': goods_list}
+    return render(request, 'market/index.html', context_dic)
 
 
 @login_required
