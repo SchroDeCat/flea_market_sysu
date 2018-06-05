@@ -140,6 +140,9 @@ def register(request):
     registered = False
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
+        if len( user_form['email'].value() ) <=0:
+            return render(request, 'market/register.html',{'user_form': UserForm(), 'profile_form': UserProfieldForm(), 'registered': registered, 'message':"Email can't be empty"})
+
         profile_form = UserProfieldForm(data=request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():

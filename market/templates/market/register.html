@@ -56,7 +56,7 @@
             {% else %}
             <form id="user_form" method="post" action="{% url 'register' %}"
                     enctype="multipart/form-data">
-
+                <span style="color:red">{% if message %}{{ message }}{% endif %}</span>
                 {% csrf_token %}
                 {{ user_form.as_p }}
 
