@@ -21,7 +21,11 @@
                 border-top-right-radius: 15px;
                 border-top-left-radius: 15px;
             }
-
+            .btn-primary {
+                color: #fff;
+                background-color: #007bff;
+                border-color: #007bff;
+            }
         </style>
 
     </head>
@@ -51,7 +55,7 @@
                 {{ user_form.as_p }}
 
                 <!-- Provide a button to click to submit the form. -->
-                <input type="submit" name="submit" value="Register" />
+                <input type="submit" name="submit" value="Register" class = "btn btn-lg btn-primary"/>
             </form>
 
             {% endif %}
