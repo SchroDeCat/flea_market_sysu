@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>重置密码</title>
+</head>
+<body>
+{% if message %}
+<p>{{ message }}</p>
+<p><a href="/market/login">跳转到登陆页</a></p>
+{% else %}
+<form method="post" action="{% url  'reset' active_code %}">
+    {% csrf_token %}
+    <span>新密码:</span><input type="password" name="password">
+    <input type="submit" value="确认修改">
+</form>
+{% endif %}
+</body>
+</html>

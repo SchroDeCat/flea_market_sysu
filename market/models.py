@@ -1,7 +1,10 @@
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer,SignatureExpired
+from itsdangerous import BadSignature,SignatureExpired
 
 class Category(models.Model):
     name = models.CharField(max_length=32,unique=True)
@@ -15,14 +18,40 @@ class UserProfile(models.Model):
     height = models.PositiveIntegerField(default="30", blank=True, null=True, editable=False)
     width = models.PositiveIntegerField(default="30", blank=True, null=True,  editable=False)
     avatar = models.ImageField(upload_to='profile',default="profile/default.png", height_field='height', width_field='width', blank=True)
-
     is_manager = models.BooleanField(default=False)
-    grade = models.CharField(blank=True,max_length=4)
+    date = models.DateField(null=True)
     campus = models.CharField(blank=True,max_length=20)
+    description = models.CharField(blank=True,max_length=50)
 
     def __str__(self):
         return self.user.username
 
+    #create activating code
+    def generate_activate_token(self,expires_in=3600):
+        s = Serializer(settings.SECRET_KEY,expires_in)
+        return s.dumps({'id':self.user.id})
+
+    #check activating code
+    @staticmethod
+    def check_activate_token(token):
+        s = Serializer(settings.SECRET_KEY)
+        try:
+            data=s.loads(token)
+        except BadSignature:
+            #return '码错误'
+            return 0
+        except SignatureExpired:
+            # return '超时'
+            return 1
+        user = User.objects.filter(id=data.get('id'))[0]
+        if not user:
+            # return 'no this user'
+            return 2
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+        # return '成功'
+        return user
 
 class Goods(models.Model):
     name = models.CharField(max_length=128)

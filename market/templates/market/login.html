@@ -27,7 +27,6 @@
                 height: 20%;
                 background-color: #EEE;
                 border-radius: 15px;
-
             }
         </style>
     </head>
@@ -49,6 +48,7 @@
         <label for="password">密码：</label>
         <input type="password" class="form-control" placeholder="Password" id="id_password" name="password" type="password" required />
         </div>
+            <span style="color:red">{{ failed }}</>
         <div style="border-top: solid 1px rgb(150,150,150);">
             <br/>
         </div>
@@ -56,7 +56,9 @@
         <button class="btn btn-lg btn-primary" type="submit" value="Submit"/>Sign in</button>
          </div>
          <div class="form-group" style="text-align: center;">
-        <a href="{% url 'register' %}">Register Here</a>
+             <a href="{% url 'register' %}">Register Here</a>
+             <a href="{% url 'forget' %}">Forget Password?</a>
+             <p><a href="{% url 'index' %}">Go Back Home</a></p>
         </div>
         </form>
         </div>

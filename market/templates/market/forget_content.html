@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改密码</title>
+</head>
+<body>
+<h1 style="text-align: center" >用户 <span style="color:red">{{ username }}</span> 你好！</h1>
+<p style="text-align: center">因系统接收到修改该用户密码的请求，本系统自动发送此邮件，并附有重置密码的的链接，如果是您本人的账号，请点击右侧链接进入修改:<a  href="http://{{ domain }}reset/{{ token }}">http://{{ domain }}reset/{{ token }}</a></p>
+<p>【请勿回复】</p>
+<p>-------------------------------------</p>
+<p>From:SYSU二手信息发布平台管家</p>
+<p style="color:red;">注：本邮件仅作个人测试，不作任何商用</p>
+</body>
+</html>

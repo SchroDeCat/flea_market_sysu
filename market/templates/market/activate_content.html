@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SYSU二手信息发布平台--账号激活</title>
+</head>
+<body>
+
+<h1 style="text-align: center" >Welcome <span style="color:red">{{ username }}</span></h1>
+<p style="text-align: center">因系统接收到激活该用户的请求，本系统自动发送此邮件，并附有用户激活的的链接，如果是您本人的账号，请点击右侧链接进入激活:<a  href="http://{{ domain }}activate/?token={{ token }}"> http://{{ domain }}activate/?token={{ token }} </a></p>
+<p>【请勿回复】</p>
+<p>-------------------------------------</p>
+<p>From:SYSU二手信息发布平台管家</p>
+<p style="color:red;">注：本邮件仅作个人测试，不作任何商用</p>
+</body>
+</html>

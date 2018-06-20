@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User
 from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
+from market.email import  send_system_mail
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from PIL import Image
+
+
 
 # Create your views here.
 
@@ -136,11 +140,18 @@ def register(request):
     registered = False
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
+        if len( user_form['email'].value() ) <=0:
+            return render(request, 'market/register.html',{'user_form': UserForm(), 'profile_form': UserProfieldForm(), 'registered': registered, 'message':"Email can't be empty"})
+        if len( User.objects.filter(email=user_form['email'].value()) ) > 0:
+            return render(request, 'market/register.html',{'user_form': UserForm(), 'profile_form': UserProfieldForm(), 'registered': registered, 'message':"The Email has been registered"})
+
         profile_form = UserProfieldForm(data=request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
+            #用户未激活
+            user.is_active=False
             user.save()
             profile = profile_form.save(commit=False)
             profile.user = user
@@ -149,7 +160,11 @@ def register(request):
             profile.save()
             registered = True
 
-            return user_login(request)
+            email = user.email
+            username = user.username
+            token = profile.generate_activate_token().decode('utf-8')
+            send_system_mail(request,email,'激活账号 For 用户：'+username,'market/activate_content',token=token,username=username)
+            return activate(request)
         else:
             print(user_form.errors,profile_form.errors)
     else:
@@ -162,18 +177,17 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username,password=password)
 
+        user = User.objects.filter(username=username)
         if user:
-            if user.is_active:
+            user = user[0]
+            if not user.is_active:
+                return render(request, 'market/activate.html', {'message': "请尽快完成激活"})
+            user = authenticate(username=username, password=password)
+            if user:
                 login(request,user)
                 return HttpResponseRedirect('/market/')
-            else:
-                return HttpResponse("Your account is disabled.")
-        else:
-            print("Invid login details:{0},{1}".format(username,password))
-            return HttpResponse("Invalid login details supplied.")
-
+        return render(request, 'market/login.html',{'failed':'用户名或密码错误'})
     else:
         return render(request, 'market/login.html',{})
 
@@ -190,29 +204,45 @@ def user_logout(request):
 
 
 def profile(request, user_id):
-    if request.user.is_authenticated:
+    if  request.user.is_authenticated and str( request.user.pk ) == user_id :
         user = request.user
         user_profile = UserProfile.objects.get(user = user)
+
+        if request.method == 'POST':
+
+            campus = request.POST.get('campus', None)
+            date = request.POST.get('date', None)
+            description = request.POST.get('description', None)
+            user_profile.campus = campus
+            user_profile.date=date
+            user_profile.description=description
+            if 'avatar' in request.FILES:
+                user_profile.avatar = request.FILES['avatar']
+            user_profile.save()
+        user_profile_top = user_profile
     else:
         user_profile = []
-    user = User.objects.get(pk=user_id)
-    user = UserProfile.objects.get(user=user)
-    goodses = Goods.objects.filter(seller=user)
-    context_dic = {'profile': user, 'user_profile': user_profile, 'goodses': goodses}
+        user = User.objects.get(pk=user_id)
+        user_profile_top = UserProfile.objects.get(user=request.user)
+    user_profile = UserProfile.objects.get(user=user)
+    goodses = Goods.objects.filter(seller=user_profile)
+    user_profile.date = str( user_profile.date)
+    context_dic = {'profile': user_profile, 'user_profile': user_profile_top, 'goodses': goodses}
+
     return render(request, 'market/profile.html',context_dic)
 
 
 def search(request):
     if request.user.is_authenticated:
         user = request.user
-        user_profile = UserProfile.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user = user)
     else:
         user_profile = []
-        key_word = request.GET.get('keyword')
-        category_list = Category.objects.all()
-        goods_list = Goods.objects.filter(name__icontains=key_word)
-        context_dic = {'categories': category_list, 'user_profile': user_profile, 'goodses': goods_list}
-        return render(request, 'market/index.html', context_dic)
+    key_word = request.GET.get('keyword')
+    category_list = Category.objects.all()
+    goods_list = Goods.objects.filter(name__icontains=key_word)
+    context_dic = {'categories': category_list, 'user_profile': user_profile, 'goodses': goods_list}
+    return render(request, 'market/index.html', context_dic)
 
 
 @login_required
@@ -226,3 +256,54 @@ def display_message(request):
     context_dic = {'user_profile': user_profile, 'messages':  messages}
     return render(request, 'market/message.html', context_dic)
 
+
+def activate(request):
+    if( 'token' in request.GET ):
+        token = request.GET['token']
+        result = UserProfile.check_activate_token(token)
+        temp = {0:'激活码错误，请重新激活',
+                1:'激活码超时，请重新激活',
+                2:'不存在此用户，请重新确认'}
+        if result in temp.keys():
+            result = temp[result]
+        else:
+            result = "用户："+result.username+" 已完成激活，请点击跳转"
+    else:
+        result = '请尽快完成激活'
+    return render(request,'market/activate.html',{'message':result})
+
+def forget(request):
+    if request.method == 'POST':
+        mail = request.POST['mail']
+        user = User.objects.filter(email=mail)[0]
+        if not user.is_active:
+            return render(request, 'market/activate.html', {'message': '请先完成账号激活'})
+        if user:
+
+            email = user.email
+            print(email)
+            username = user.username
+            user_profile = UserProfile.objects.get(user=user)
+            token = user_profile.generate_activate_token().decode('utf-8')
+            send_system_mail(request,email,'修改密码 For 用户：'+username,'market/forget_content',token=token,username=username)
+            return  render(request,'market/forget.html',{'success':'已发送密码重置邮件，请尽快查看并修改'})
+        return render(request,'market/forget.html',{'failed':'不存在此用户'})
+    else:
+        return render(request, 'market/forget.html')
+
+def reset(request,active_code):
+    if request.method == 'POST':
+        result = UserProfile.check_activate_token(active_code)
+        temp = {0:'验证链接错误，请重新请求',
+                1:'验证链接超时，请重新请求',
+                2:'不存在此用户，请重新确认'}
+        if result in temp.keys():
+            result=temp[result]
+            return render(request,'market/reset.html',{'message':result})
+        else:
+            password = request.POST.get('password')
+            result.set_password(password)
+            result.save()
+            return render(request,'market/reset.html',{'message':'修改成功，请点击跳转'})
+    else:
+        return render(request,'market/reset.html',{'active_code':active_code})
