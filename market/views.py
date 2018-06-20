@@ -207,12 +207,23 @@ def profile(request, user_id):
     if request.user.is_authenticated:
         user = request.user
         user_profile = UserProfile.objects.get(user = user)
+        if request.method == 'POST':
+            campus = request.POST.get('campus', None)
+            date = request.POST.get('date', None)
+            description = request.POST.get('description', None)
+            user_profile.campus = campus
+            user_profile.date=date
+            user_profile.description=description
+            if 'avatar' in request.FILES:
+                user_profile.avatar = request.FILES['avatar']
+            user_profile.save()
     else:
         user_profile = []
-    user = User.objects.get(pk=user_id)
-    user = UserProfile.objects.get(user=user)
-    goodses = Goods.objects.filter(seller=user)
-    context_dic = {'profile': user, 'user_profile': user_profile, 'goodses': goodses}
+        user = User.objects.get(pk=user_id)
+    user_profile = UserProfile.objects.get(user=user)
+    goodses = Goods.objects.filter(seller=user_profile)
+    user_profile.date = str( user_profile.date)
+    context_dic = {'profile': user_profile, 'user_profile': user_profile, 'goodses': goodses}
     return render(request, 'market/profile.html',context_dic)
 
 

@@ -19,8 +19,9 @@ class UserProfile(models.Model):
     width = models.PositiveIntegerField(default="30", blank=True, null=True,  editable=False)
     avatar = models.ImageField(upload_to='profile',default="profile/default.png", height_field='height', width_field='width', blank=True)
     is_manager = models.BooleanField(default=False)
-    grade = models.CharField(blank=True,max_length=4)
+    date = models.DateField(null=True)
     campus = models.CharField(blank=True,max_length=20)
+    description = models.CharField(blank=True,max_length=50)
 
     def __str__(self):
         return self.user.username
