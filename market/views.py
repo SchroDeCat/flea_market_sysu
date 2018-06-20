@@ -204,10 +204,12 @@ def user_logout(request):
 
 
 def profile(request, user_id):
-    if  request.user.is_authenticated and request.user.pk==user_id :
+    if  request.user.is_authenticated and str( request.user.pk ) == user_id :
         user = request.user
         user_profile = UserProfile.objects.get(user = user)
+
         if request.method == 'POST':
+
             campus = request.POST.get('campus', None)
             date = request.POST.get('date', None)
             description = request.POST.get('description', None)
@@ -226,6 +228,7 @@ def profile(request, user_id):
     goodses = Goods.objects.filter(seller=user_profile)
     user_profile.date = str( user_profile.date)
     context_dic = {'profile': user_profile, 'user_profile': user_profile_top, 'goodses': goodses}
+
     return render(request, 'market/profile.html',context_dic)
 
 
