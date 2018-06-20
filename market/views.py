@@ -204,7 +204,7 @@ def user_logout(request):
 
 
 def profile(request, user_id):
-    if request.user.is_authenticated:
+    if  request.user.is_authenticated and request.user.pk==user_id :
         user = request.user
         user_profile = UserProfile.objects.get(user = user)
         if request.method == 'POST':
@@ -217,13 +217,15 @@ def profile(request, user_id):
             if 'avatar' in request.FILES:
                 user_profile.avatar = request.FILES['avatar']
             user_profile.save()
+        user_profile_top = user_profile
     else:
         user_profile = []
         user = User.objects.get(pk=user_id)
+        user_profile_top = UserProfile.objects.get(user=request.user)
     user_profile = UserProfile.objects.get(user=user)
     goodses = Goods.objects.filter(seller=user_profile)
     user_profile.date = str( user_profile.date)
-    context_dic = {'profile': user_profile, 'user_profile': user_profile, 'goodses': goodses}
+    context_dic = {'profile': user_profile, 'user_profile': user_profile_top, 'goodses': goodses}
     return render(request, 'market/profile.html',context_dic)
 
 

@@ -14,7 +14,7 @@
                     <ul class="seller_attr">
                         <li>邮箱：{{ profile.user.email }}</li>
                         <li>状态：{% if profile.user.is_active %} 已通过认证 {% else %} 未通过认证{% endif %}  </li>
-                        <li>校区：<select  name="campus" {% if not user.is_authenticated %} disabled="disabled" {% endif %}>
+                        <li>校区：<select  name="campus" {% if not user.is_authenticated or  user.id != profile.user.id %} disabled="disabled" {% endif %}>
                             <option value = "东校园"  {% if profile.campus == "东校园" %} selected {% endif %}>东校园</option>
                             <option value = "南校园"  {% if profile.campus == "南校园" %} selected {% endif %}>南校园</option>
                             <option value = "北校园"  {% if profile.campus == "北校园" %} selected {% endif %}>北校园</option>
@@ -22,10 +22,13 @@
                             <option value = "深圳校区" {% if profile.campus == "深圳校区" %} selected {% endif %}>深圳校区</option>
                             <option value = "未填写" {% if not profile.campus %} selected {% endif %}>未填写</option>
                         </select> </li>
-                        <li>入学：<input type = "date" name = "date" {% if not user.is_authenticated %} readonly {% endif %}  value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}"> </li>
-                        <li>个签：<input type = "text" name = "description" maxlength="50" value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}" ></li>
-                        <li>头像：<input type="file" name = "avatar" accept="image/*"></li>
-                        {% if user.is_authenticated %}<li><button type="submit">修改</button></li> {% endif %}
+                        <li>入学：<input type = "date" name = "date" {% if not user.is_authenticated or  user.id != profile.user.id %} readonly {% endif %}  value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}"> </li>
+                        <li>个签：<input type = "text" name = "description" maxlength="50" {% if  not user.is_authenticated or  user.id != profile.user.id %} readonly {% endif %} value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}" ></li>
+                        {% if  user.is_authenticated and user.id and user.id == profile.user.id %}
+                            <li>头像：<input type="file" name = "avatar" accept="image/*"></li>
+                            <li><button type="submit">修改</button></li>
+                        {% endif %}
+
                     </ul>
                     </form>
                 </div>
@@ -53,13 +56,13 @@
                             </div>
                         </div>
 
-                        {% if goods.picture_url %}
+                        {% if goods.picture.url %}
                             <a href="{% url 'goods' goods.pk %}" >
-                                <img class="enshr_ph" src="{{ goods.picture_url }}" />
+                                <img class="enshr_ph" src="{{ goods.picture.url }}" />
                             </a>
                          {% else %}
                              <a href="{% url 'goods' goods.pk %}" >
-                                <img class="enshr_ph" src="{{ goods.picture.url }}" />
+                                <img class="enshr_ph" src="{{ goods.picture_url }}" />
                              </a>
                           {% endif %}
 
