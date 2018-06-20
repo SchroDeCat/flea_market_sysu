@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User
 from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
-from market.email import  send_activate_mail
+from market.email import  send_system_mail
 
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
@@ -142,6 +142,8 @@ def register(request):
         user_form = UserForm(data=request.POST)
         if len( user_form['email'].value() ) <=0:
             return render(request, 'market/register.html',{'user_form': UserForm(), 'profile_form': UserProfieldForm(), 'registered': registered, 'message':"Email can't be empty"})
+        if len( User.objects.filter(email=user_form['email'].value()) ) > 0:
+            return render(request, 'market/register.html',{'user_form': UserForm(), 'profile_form': UserProfieldForm(), 'registered': registered, 'message':"The Email has been registered"})
 
         profile_form = UserProfieldForm(data=request.POST)
 
@@ -161,7 +163,7 @@ def register(request):
             email = user.email
             username = user.username
             token = profile.generate_activate_token().decode('utf-8')
-            send_activate_mail(request,email,'激活账号','market/activate_content',token=token,username=username)
+            send_system_mail(request,email,'激活账号 For 用户：'+username,'market/activate_content',token=token,username=username)
             return activate(request)
         else:
             print(user_form.errors,profile_form.errors)
@@ -243,7 +245,49 @@ def activate(request):
     if( 'token' in request.GET ):
         token = request.GET['token']
         result = UserProfile.check_activate_token(token)
+        temp = {0:'激活码错误，请重新激活',
+                1:'激活码超时，请重新激活',
+                2:'不存在此用户，请重新确认'}
+        if result in temp.keys():
+            result = temp[result]
+        else:
+            result = "用户："+result.username+" 已完成激活，请点击跳转"
     else:
         result = '请尽快完成激活'
     return render(request,'market/activate.html',{'message':result})
 
+def forget(request):
+    if request.method == 'POST':
+        mail = request.POST['mail']
+        user = User.objects.filter(email=mail)[0]
+        if not user.is_active:
+            return render(request, 'market/activate.html', {'message': '请先完成账号激活'})
+        if user:
+
+            email = user.email
+            print(email)
+            username = user.username
+            user_profile = UserProfile.objects.get(user=user)
+            token = user_profile.generate_activate_token().decode('utf-8')
+            send_system_mail(request,email,'修改密码 For 用户：'+username,'market/forget_content',token=token,username=username)
+            return  render(request,'market/forget.html',{'success':'已发送密码重置邮件，请尽快查看并修改'})
+        return render(request,'market/forget.html',{'failed':'不存在此用户'})
+    else:
+        return render(request, 'market/forget.html')
+
+def reset(request,active_code):
+    if request.method == 'POST':
+        result = UserProfile.check_activate_token(active_code)
+        temp = {0:'验证链接错误，请重新请求',
+                1:'验证链接超时，请重新请求',
+                2:'不存在此用户，请重新确认'}
+        if result in temp.keys():
+            result=temp[result]
+            return render(request,'market/reset.html',{'message':result})
+        else:
+            password = request.POST.get('password')
+            result.set_password(password)
+            result.save()
+            return render(request,'market/reset.html',{'message':'修改成功，请点击跳转'})
+    else:
+        return render(request,'market/reset.html',{'active_code':active_code})

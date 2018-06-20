@@ -18,7 +18,6 @@ class UserProfile(models.Model):
     height = models.PositiveIntegerField(default="30", blank=True, null=True, editable=False)
     width = models.PositiveIntegerField(default="30", blank=True, null=True,  editable=False)
     avatar = models.ImageField(upload_to='profile',default="profile/default.png", height_field='height', width_field='width', blank=True)
-
     is_manager = models.BooleanField(default=False)
     grade = models.CharField(blank=True,max_length=4)
     campus = models.CharField(blank=True,max_length=20)
@@ -38,16 +37,20 @@ class UserProfile(models.Model):
         try:
             data=s.loads(token)
         except BadSignature:
-            return '激活码错误'
+            #return '码错误'
+            return 0
         except SignatureExpired:
-            return '激活超时，请重新注册'
+            # return '超时'
+            return 1
         user = User.objects.filter(id=data.get('id'))[0]
         if not user:
-            return 'no this user'
+            # return 'no this user'
+            return 2
         if not user.is_active:
             user.is_active = True
             user.save()
-        return '激活成功请跳转登陆'
+        # return '成功'
+        return user
 
 class Goods(models.Model):
     name = models.CharField(max_length=128)

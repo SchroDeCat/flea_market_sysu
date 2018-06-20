@@ -56,12 +56,13 @@
             {% else %}
             <form id="user_form" method="post" action="{% url 'register' %}"
                     enctype="multipart/form-data">
-                <p style="text-align: center">{% if message %}{{ message }}{% endif %}</p>
+                <p style="text-align: center ; color:red">{% if message %}{{ message }}{% endif %}</p>
                 {% csrf_token %}
                 {{ user_form.as_p }}
 
                 <!-- Provide a button to click to submit the form. -->
                 <input type="submit" name="submit" value="Register" class = "btn btn-lg btn-primary"/>
+                <p><a href="{% url 'login' %}">To Login</a> <a href="{% url 'index' %}">Go Back Home</a></p>
             </form>
 
             {% endif %}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>找回密码</title>
+</head>
+<body>
+{% if success %}
+    <p>{{ success }}</p>
+    <p><a href="/market/login">跳转到登陆页</a></p>
+{% else %}
+<form action="{% url 'forget' %}" method="post">
+    {% csrf_token %}
+    {% if failed %}<p>{{ failed }}</p>{% endif %}
+    <span>邮箱地址</span><input type="email" name="mail">
+    <input type="submit" value="下一步">
+</form>
+{% endif %}
+</body>
+</html>

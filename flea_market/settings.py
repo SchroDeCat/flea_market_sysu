@@ -131,5 +131,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST= 'smtp.163.com'
 EMAIL_PORT= 25
 EMAIL_HOST_USER='sysu_market@163.com'
-EMAIL_HOST_PASSWORD='sysumarket163'
+EMAIL_HOST_PASSWORD='15sysumarket'
 DEFAULT_FROM_EMAIL='中大二手管家<sysu_market@163.com>'

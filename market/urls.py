@@ -17,5 +17,9 @@ urlpatterns = [
     url(r'^search',                             views.search, name='search'),
     url(r'^message/',                           views.display_message, name='message'),
     url(r'^activate/',                          views.activate,name='activate'),
+    url(r'^forget/',                          views.forget,name='forget'),
+    # url(r'^forget/$',                        views.forget,name='forget'),
+    url(r'^reset/(?P<active_code>.*)/$',         views.reset,name='reset'),
+
 ]   
 
