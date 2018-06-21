@@ -54,7 +54,7 @@
                             <h5>{{ goods.description }}</h5>
                             <div class="enshr_state">
                                 <span class="enshr_info_price">¥{{ goods.price }}</span>
-                                <span class="enshr_info_address">交易地点： {{ goods.trade_location }}</span><a href="javascript:void(0);"  name="control" id="{{ goods.pk }}" > {% if selector == 'on_sale' %} 下架 {% elif selector == 'marked'%} 收藏商品 {% else %} {% endif %}</a>
+                                <span class="enshr_info_address">交易地点： {{ goods.trade_location }}</span><a href="javascript:void(0);"  name="control" id="{{ goods.pk }}" > {% if selector == 'on_sale' %} 下架 {% elif selector == 'marked'%} 取消收藏 {% else %} {% endif %}</a>
                             </div>
                         </div>
 
@@ -83,6 +83,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
 
+    {% if selector == 'on_sale' %}
         $('a[name="control"]').bind('click',function (e) {
             if(!confirm("确定下架该商品？")) return ;
             var temp = this;
@@ -96,9 +97,27 @@
                    }
                 }
             );
+        });
+
+    {% elif selector == 'marked'%}
+
+        $('a[name="control"]').bind('click',function (e) {
+            if(!confirm("确定取消收藏该商品？")) return ;
+            var temp = this;
+            $.post("{% url 'mark_goods' %}",{'g_id':this.id,'is_marked':1 },function(ret) {
+                   if(ret.res){
+                       alert("取消收藏成功");
+                       temp.innerHTML="已取消收藏";
+                   }
+                   else{
+                       alert("网络出现错误");
+                   }
+                }
+            );
         })
 
 
+    {% else %} {% endif %}
     </script>
 
 {% endblock %}

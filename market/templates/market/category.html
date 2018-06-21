@@ -77,7 +77,7 @@
                         <li><a href="{% url 'about' %}">About</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
                          <li><a href=""><img src='{{ user_profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
-                        <li><a href="{% url 'profile' user.pk %}" >{{ user_profile.user.username }}</a></li>
+                        <li><a href="{% url 'self_profile' 'info' %}" >{{ user_profile.user.username }}</a></li>
                     {% else %}
                         <li><a href="{% url 'register' %}">Register Here</a></li>
                         <li><a href="{% url 'login' %}">Login</a></li>

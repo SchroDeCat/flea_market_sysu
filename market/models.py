@@ -70,7 +70,6 @@ class Goods(models.Model):
     report_times = models.IntegerField(default=0,blank=False)
     on_sale = models.BooleanField(default=True,blank=False,null=False)
     down_time = models.DateTimeField(auto_now_add=True,null=True,blank=True)
-
     def __str__(self):
         return self.name
 
