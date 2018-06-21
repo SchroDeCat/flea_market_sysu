@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^admin/',     admin.site.urls),
     url(r'^$',          include('market.urls')),
     url(r'^market/',    include('market.urls')),
+    url(r'^dashboard/',  include('dashboard.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
