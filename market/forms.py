@@ -32,7 +32,7 @@ class GoodsForm(forms.ModelForm):
 
     class Meta:
         model = Goods
-        exclude = ('seller', 'picture_url', 'seen_times')
+        exclude = ('seller', 'picture_url', 'seen_times','report_times')
 
 
 class CommentForm(forms.ModelForm):
