@@ -353,6 +353,16 @@ def report(request):
         if(good.report_times >= 10):
             good.on_sale=False
             good.down_time=timezone.now()
+            comment = Comment()
+            comment.user = good.seller
+            comment.goods = good
+            comment.content = "您的商品:"+good.name+"被举报不符合平台规范，已被强迫下架。如有疑问，请联系sysu_market@163.com."
+            comment.save()
+            message = InstationMessage()
+            message.sender = good.seller
+            message.receiver = good.seller
+            message.content = comment.content
+            message.save()
         good.save()
         return_json = {'report_times':good.report_times}
     else:return_json = {'report_times':-1}
