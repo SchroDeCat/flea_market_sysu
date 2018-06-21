@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.shortcuts import render
 from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User
 from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
