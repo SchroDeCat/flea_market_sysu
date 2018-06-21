@@ -238,11 +238,11 @@ def self_profile(request, selector):
 
     if request.method == 'GET':
         if selector == 'on_sale':
-            goodses = Goods.objects.filter(seller=user_profile,on_sale=True)
+            goodses = Goods.objects.filter(seller=user_profile,on_sale=True).order_by('-publish_time')
         elif selector == 'marked':
             goodses = MarkedTable.objects.filter(user=user_profile)
         elif selector == 'out_sale':
-            goodses = Goods.objects.filter(seller=user_profile,on_sale=False)
+            goodses = Goods.objects.filter(seller=user_profile,on_sale=False).order_by('-down_time')
         elif selector == 'info':
             goodses = None
             user_profile.date = str(user_profile.date)
