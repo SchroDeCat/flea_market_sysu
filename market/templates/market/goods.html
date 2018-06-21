@@ -131,7 +131,7 @@
 		                            <div class="value"><span class="real-time">{{ goods.publish_time }}</span></div>
 		                        </li>
 		                    </ul>
-                            <div class="complain"><a href="javascript:void(0);" onclick="report();"><h4>&bull;&nbsp;&nbsp;&nbsp;&nbsp;举报&nbsp;&nbsp;&nbsp;&nbsp;&bull;</h4></a></div>
+                            <div class="complain"><a href="javascript:void(0);" id="report"><h4>&bull;&nbsp;&nbsp;&nbsp;&nbsp;举报&nbsp;&nbsp;&nbsp;&nbsp;&bull;</h4></a></div>
        				</div>
            		</div>
 
@@ -168,7 +168,7 @@
                             <p class="comment">{{ comment.content }}</p>
                             <div class="man">
                                <!--  <a class="rpl" href="javascript:;" onclick="reply(64267, 'Ammar')">回复</a> -->
-                               <a class="rpl" href="javascript:;" onclick="reply('{{ comment.user.user.username }}')">回复</a>
+                               <a class="rpl" href="javascript:;" onclick="reply('{{ comment.user.user.username  }}')">回复</a>
                             </div>
                         </div>
                         {% endfor %}
@@ -219,6 +219,15 @@
     <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script>
+        $('#report').click(function () {
+            $.post("{% url 'report' %}",{'g_id':{{goods.pk}} },function(ret) {
+                    if (ret.report_times < 0) alert("失效商品，举报失败")
+                    else alert("举报成功");
+                }
+            );
+        });
+    </script>
   </body>
 </html>
 
