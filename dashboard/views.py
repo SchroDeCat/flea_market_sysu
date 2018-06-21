@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.template import loader
 from django.http import HttpResponse
 
 
-@login_required
+@staff_member_required
 def index(request):
     context = {}
     template = loader.get_template('app/index4.html')
