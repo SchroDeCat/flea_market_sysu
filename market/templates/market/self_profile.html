@@ -1,0 +1,104 @@
+{% extends 'market/base_profile.html' %}
+
+{% block title %}{{ profile.user.username }}{% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <div class="main">
+            <div class="top clearfix">
+                <div id="user_msg">
+                    <div class="name">{{ profile.user.username }}</div>
+                    <ul class="seller_attr">
+                        <li>邮箱：{{ profile.user.email }}</li>
+                        <li>状态：{% if profile.user.is_active %} 已通过认证 {% else %} 未通过认证{% endif %}  </li>
+                    </ul>
+                </div>
+                <div id="user_photo">
+                        {% if profile.avatar %}
+                        <img id="origin_ph" src="{{ profile.avatar.url }}" />
+                        {% else %}
+                            <img id="origin_ph1" src="" />
+                        {% endif %}
+                </div>
+            </div>
+            <ul id="middle_nav" class="clearfix">
+                <li class="on"><a  href="javascript:;">{{ label }}</a></li>
+            </ul>
+
+        {% if selector == 'info' %}
+             <form action="{% url 'self_profile' 'info' %}" method="post" enctype="multipart/form-data">
+                 {% csrf_token %}
+                    <ul class="seller_attr">
+                        <li>校区：<select  name="campus" >
+                            <option value = "东校园"  {% if profile.campus == "东校园" %} selected {% endif %}>东校园</option>
+                            <option value = "南校园"  {% if profile.campus == "南校园" %} selected {% endif %}>南校园</option>
+                            <option value = "北校园"  {% if profile.campus == "北校园" %} selected {% endif %}>北校园</option>
+                            <option value = "珠海校区" {% if profile.campus == "珠海校区" %} selected {% endif %}>珠海校区</option>
+                            <option value = "深圳校区" {% if profile.campus == "深圳校区" %} selected {% endif %}>深圳校区</option>
+                            <option value = "未填写" {% if not profile.campus %} selected {% endif %}>未填写</option>
+                        </select> </li>
+                        <li>入学：<input type = "date" name = "date"   value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}"> </li>
+                        <li>个签：<input type = "text" name = "description" maxlength="50"  value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}" ></li>
+                            <li>头像：<input type="file" name = "avatar" accept="image/*"></li>
+                            <li><input type="submit" value="修改"></li>
+                    </ul>
+             </form>
+
+        {% else %}
+            <div id="my_products">
+                <div id="onsale_pro">
+                    {% for goods in goodses %}
+                    <div class="enshr_each">
+                        <div class="enshr_info">
+                            <h4><a href="{% url 'goods' goods.pk %}"  target="_blank">{{ goods.name }}</a></h4>
+                            <h5>{{ goods.description }}</h5>
+                            <div class="enshr_state">
+                                <span class="enshr_info_price">¥{{ goods.price }}</span>
+                                <span class="enshr_info_address">交易地点： {{ goods.trade_location }}</span><a href="javascript:void(0);"  name="control" id="{{ goods.pk }}" > {% if selector == 'on_sale' %} 下架 {% elif selector == 'marked'%} 收藏商品 {% else %} {% endif %}</a>
+                            </div>
+                        </div>
+
+                        {% if goods.picture.url %}
+                            <a href="{% url 'goods' goods.pk %}" >
+                                <img class="enshr_ph" src="{{ goods.picture.url }}" />
+                            </a>
+                         {% else %}
+                             <a href="{% url 'goods' goods.pk %}" >
+                                <img class="enshr_ph" src="{{ goods.picture_url }}" />
+                             </a>
+                          {% endif %}
+
+                          <!--   {% if goods.picture %}
+                            <div class=enshr_ph><a href="{% url 'goods' goods.pk %}"><img src="{{ goods.picture.url }}"></a></div>
+                            {% else %}
+                                <div class=enshr_ph><a href="{% url 'goods' goods.pk %}"><img src="{{ goods.picture_url }}"></a></div>
+                            {% endif %}-->
+                    </div>
+                    {% endfor %}
+                </div>
+        {% endif %}
+            </div>
+        </div>
+    </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+
+        $('a[name="control"]').bind('click',function (e) {
+            if(!confirm("确定下架该商品？")) return ;
+            var temp = this;
+            $.post("{% url 'down_goods' %}",{'g_id':this.id },function(ret) {
+                   if(!ret.on_sale){
+                       alert("删除成功");
+                       temp.innerHTML="已下架"
+                   }
+                   else{
+                       alert("删除过程出现错误")
+                   }
+                }
+            );
+        })
+
+
+    </script>
+
+{% endblock %}

@@ -67,6 +67,9 @@ class Goods(models.Model):
     goods_qq = models.IntegerField(null=True, blank=True)
     publish_time = models.DateField(auto_now_add=True, null=True, blank=True)
     seen_times = models.IntegerField(default=0, blank=False)
+    report_times = models.IntegerField(default=0,blank=False)
+    on_sale = models.BooleanField(default=True,blank=False,null=False)
+    down_time = models.DateTimeField(auto_now_add=True,null=True,blank=True)
 
     def __str__(self):
         return self.name
@@ -91,3 +94,8 @@ class InstationMessage(models.Model):
 
     def __str__(self):
         return self.content
+
+class MarkedTable(models.Model):
+    user = models.ForeignKey(UserProfile,on_delete='cascade')
+    goods = models.ForeignKey(Goods,on_delete='cascade')
+    mark_time = models.DateTimeField(auto_now_add=True)

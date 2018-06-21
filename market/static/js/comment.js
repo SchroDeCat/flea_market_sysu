@@ -6,9 +6,16 @@
  	moveEnd(input)
 }
 
-function report(){
-    alert("您已经成功举报该商品！");
-}
+// function report(){
+//     $.ajax({
+//         type:'POST',
+//         url:'/market/report',
+//         dataType:{ g_id:{{goods.pk}} },
+//         success:function (arg) {
+//             alert("您已经成功举报该商品！");
+//         }
+//     });
+// }
 
 function moveEnd(obj){
     obj.focus();

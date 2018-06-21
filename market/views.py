@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User
+from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User, MarkedTable
 from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
 from market.email import  send_system_mail
 
@@ -7,13 +7,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import json
+
 from PIL import Image
 
-
-
 # Create your views here.
-
 
 def index(request):
     if request.user.is_authenticated:
@@ -24,7 +25,7 @@ def index(request):
         user_profile = []
         message_unread = 0
     category_list = Category.objects.all()
-    goods_list = Goods.objects.all().order_by('-publish_time')
+    goods_list = Goods.objects.filter(on_sale=True).order_by('-publish_time')
     context_dic = {'categories': category_list,
                    'user_profile': user_profile,
                    'goodses': goods_list,
@@ -38,16 +39,15 @@ def category(request, category_id):
         user_profile = UserProfile.objects.get(user=user)
     else:
         user_profile = []
-
     page_list = []
     try:
         category_filter = Category.objects.get(pk=category_id)
         name = category_filter.name
         if request.GET.get('rank'):
             rank = request.GET.get('rank')
-            goodses_list = Goods.objects.filter(category=category_filter).order_by('-'+rank)
+            goodses_list = Goods.objects.filter(category=category_filter,on_sale=True).order_by('-'+rank)
         else:
-            goodses_list = Goods.objects.filter(category=category_filter)
+            goodses_list = Goods.objects.filter(category=category_filter,on_sale=True)
         # 实现分页功能
         paginator = Paginator(goodses_list, 12)     # Show 12 items per page
         page = request.GET.get('page')
@@ -104,7 +104,6 @@ def add_comment(request, goods_id):
             message.receiver = goods.seller
             message.content = comment.content
             message.save()
-
             return goods_page(request,goods_id)
         else:
             print(comment_form.errors)
@@ -125,6 +124,8 @@ def add_goods(request):
             if 'picture' in request.FILES:
                 goods.picture = request.FILES['picture']
             print(goods.picture)
+            goods.on_sale=True
+            goods.report_times=0
             goods.seen_times = 0
             goods.save()
             return index(request)
@@ -228,8 +229,37 @@ def profile(request, user_id):
     goodses = Goods.objects.filter(seller=user_profile)
     user_profile.date = str( user_profile.date)
     context_dic = {'profile': user_profile, 'user_profile': user_profile_top, 'goodses': goodses}
-
     return render(request, 'market/profile.html',context_dic)
+
+def self_profile(request, selector):
+    labels = {'on_sale': '在售的商品','marked': '收藏的商品','out_sale': '下架的商品','info': '个人的信息'}
+    user = request.user
+    user_profile = UserProfile.objects.get(user=user)
+
+    if request.method == 'GET':
+        if selector == 'on_sale':
+            goodses = Goods.objects.filter(seller=user_profile,on_sale=True)
+        elif selector == 'marked':
+            goodses = MarkedTable.objects.filter(user=user_profile)
+        elif selector == 'out_sale':
+            goodses = Goods.objects.filter(seller=user_profile,on_sale=False)
+        elif selector == 'info':
+            goodses = None
+            user_profile.date = str(user_profile.date)
+        context_dic = {'profile':user_profile,'goodses':goodses,'selector':selector,'label':labels[selector]}
+        return render(request,'market/self_profile.html',context_dic)
+    else:
+        if selector == 'info':
+            user_profile.campus = request.POST.get('campus', None)
+            user_profile.date=request.POST.get('date', None)
+            user_profile.description=request.POST.get('description', None)
+            if 'avatar' in request.FILES:
+                user_profile.avatar = request.FILES['avatar']
+            user_profile.save()
+            user_profile = UserProfile.objects.get(user=user)
+            user_profile.date = str(user_profile.date)
+            print('yes')
+            return render(request, 'market/self_profile.html', {'profile':user_profile,'selector':selector})
 
 
 def search(request):
@@ -307,3 +337,33 @@ def reset(request,active_code):
             return render(request,'market/reset.html',{'message':'修改成功，请点击跳转'})
     else:
         return render(request,'market/reset.html',{'active_code':active_code})
+
+@csrf_exempt
+def report(request):
+    if(request.method == 'POST'):
+        g_id = request.POST['g_id']
+        good = Goods.objects.get(pk = g_id)
+        good.report_times += 1
+        if(good.report_times >= 10):
+            good.on_sale=False
+            good.down_time=timezone.now()
+        good.save()
+        return_json = {'report_times':good.report_times}
+        print("times",good.report_times,good.down_time)
+    else:return_json = {'report_times':-1}
+    return HttpResponse(json.dumps(return_json), content_type='application/json')
+
+
+@csrf_exempt
+def down_goods(request):
+    print('yes')
+    if(request.method == 'POST'):
+        g_id = request.POST['g_id']
+        good = Goods.objects.get(pk = g_id)
+        good.on_sale=False
+        good.down_time=timezone.now()
+        good.save()
+        return_json = {'on_sale':good.on_sale}
+    else:return_json = {'on_sale':True}
+    print(return_json)
+    return HttpResponse(json.dumps(return_json), content_type='application/json')

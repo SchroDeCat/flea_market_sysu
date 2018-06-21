@@ -86,8 +86,8 @@
 
                         <li><a href="{% url 'about' %}">About</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
-                        <li><a href=""><img src='{{ user_profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
-                        <li><a href="{% url 'self_profile' 'info' %}" >{{ user_profile.user.username }}</a></li>
+                        <li><a href=""><img src='{{ profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
+                        <li><a href="{% url 'self_profile' 'info' %}" >{{ profile.user.username }}</a></li>
                     {% else %}
                         <li><a href="{% url 'register' %}">Register Here</a></li>
                         <li><a href="{% url 'login' %}">Login</a></li>
@@ -100,10 +100,12 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-                {% block side_block %}
-                {% load rango_extras %}
-                {% get_category_list category %}
-                {% endblock %}
+            <ul class="nav nav-sidebar">
+                <li><a href="{% url 'self_profile' 'on_sale'    %}">在售的商品</a></li>
+                <li><a href="{% url 'self_profile' 'marked'     %}">收藏的商品</a></li>
+                <li><a href="{% url 'self_profile' 'out_sale'   %}">下架的商品</a></li>
+                <li><a href="{% url 'self_profile' 'info'       %}">个人的信息</a></li>
+            </ul>
         </div>
         <div class="col-sm-7 col-sm-offset-3 col-md-7 col-md-offset-2 main">
            <div>
