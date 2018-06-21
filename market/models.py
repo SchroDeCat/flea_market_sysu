@@ -91,7 +91,7 @@ class InstationMessage(models.Model):
     sender = models.ForeignKey(UserProfile, related_name='sender_id', on_delete='cascade')
     content = models.CharField(max_length=140)
     send_time = models.DateField(auto_now_add=True)
-    item_id = models.ForeignKey(Goods, blank=True, null=True, on_delete='cascade')
+    item = models.ForeignKey(Goods, blank=True, null=True, on_delete='cascade')
     active = models.BooleanField(default=True)
     notification = models.BooleanField(default=False)
 

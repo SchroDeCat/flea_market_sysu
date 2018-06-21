@@ -105,7 +105,7 @@ def add_comment(request, goods_id):
             message.sender = user_profile
             message.receiver = goods.seller
             message.content = comment.content
-            message.item_id = goods
+            message.item = goods
             message.save()
             return goods_page(request,goods_id)
         else:
@@ -283,13 +283,14 @@ def display_message(request):
     user = request.user
     user_profile = UserProfile.objects.get(user=user)
     messages = InstationMessage.objects.filter(receiver=user_profile, notification=False).order_by('-send_time')
-    goods_pk = []
+    print(messages)
+    goods_id = []
     for mes in messages:
         mes.active = False
-        goods = Goods.objects.get(goods=messages.item_id)
-        goods_pk.append(goods.pk)
+        # goods = Goods.objects.get(id=mes.item)
+        goods_id.append(mes.item)
         mes.save()
-    context_dic = {'user_profile': user_profile, 'messages':  messages, 'url': goods_pk}
+    context_dic = {'user_profile': user_profile, 'messages':  messages, 'goods_id': goods_id}
     return render(request, 'market/message.html', context_dic)
 
 
