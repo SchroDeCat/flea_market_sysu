@@ -79,7 +79,8 @@
             {% for message in messages %}
                      <div id = "message_content">
                      <h4>发送者：{{ message.sender }}</h4>
-                     <h4>发送内容：{{ message.content }}</h4>
+                         <a href="{% url 'goods' message.item.id %}"> Link </a>>
+                     <h4 >发送内容：{{ message.content }}</h4>
                      <h4>发送时间：{{ message.send_time }}</h4>
                    </div>
                      <br>
