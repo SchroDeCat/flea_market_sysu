@@ -360,17 +360,21 @@ def report(request):
         if(good.report_times >= 10):
             good.on_sale=False
             good.down_time=timezone.now()
+            good.save()
+            good = Goods.objects.get(pk=good.pk)
             comment = Comment()
             comment.user = good.seller
             comment.goods = good
-            comment.content = "您的商品:"+good.name+"被举报不符合平台规范，已被强迫下架。如有疑问，请联系sysu_market@163.com."
+            comment.content = "[系统消息]您的商品: "+good.name+" 被多次举报不符合平台规范，已被强迫下架。如有疑问，请联系sysu_market@163.com."
             comment.save()
             message = InstationMessage()
             message.sender = good.seller
             message.receiver = good.seller
             message.content = comment.content
+            message.item = good
+            print("message",message.item.pk)
             message.save()
-        good.save()
+        else:good.save()
         return_json = {'report_times':good.report_times}
     else:return_json = {'report_times':-1}
     return HttpResponse(json.dumps(return_json), content_type='application/json')
