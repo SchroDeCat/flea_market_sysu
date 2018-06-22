@@ -3,9 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>激活页面</title>
+    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/4.0/examples/sign-in/signin.css">
+    <style type="text/css">
+    	#logcon{
+            margin-top: 10%;
+            width: 23%;
+            height: 20%;
+            background-color: #EEE;
+            border-radius: 15px;
+        }
+        #logheader{
+            background-color: #DBDBDB;
+            border-bottom:solid 1px #AAA; 
+            margin-bottom: 10px;
+            border-top-right-radius: 15px;
+            border-top-left-radius: 15px;
+            text-indent: 2em;
+        }
+    </style>
+    <meta http-equiv=refresh content="5;/market/login">
 </head>
-<body>
-<p>{{ message }}</p>
-<p><a href="/market/login">跳转到登陆页</a></p>
+<body style="background-color: #383841">
+	<div class="container" id="logcon">
+		<div class="row-md-2"></div>
+		<div class="row" id="logheader">
+        	<h2 class="form-signin-heading">注册完成</h2>
+        </div>
+		<p>{{ message }}</p>
+		<p>5秒后自动跳转到登陆页...</p>
+		<p><a href="/market/login">跳转到登陆页</a></p>
+	</div>
 </body>
 </html>

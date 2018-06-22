@@ -14,7 +14,7 @@
                     <ul class="seller_attr">
                         <li>邮箱：{{ profile.user.email }}</li>
                         <li>状态：{% if profile.user.is_active %} 已通过认证 {% else %} 未通过认证{% endif %}  </li>
-                        <li>校区：<select  name="campus" {% if not user.is_authenticated or  user.id != profile.user.id %} disabled="disabled" {% endif %}>
+                        <li>校区：<select  name="campus" {% if not user.is_authenticated or  user.id != profile.user.id %} disabled="disabled" {% endif %} style="height: 23px;">
                             <option value = "东校园"  {% if profile.campus == "东校园" %} selected {% endif %}>东校园</option>
                             <option value = "南校园"  {% if profile.campus == "南校园" %} selected {% endif %}>南校园</option>
                             <option value = "北校园"  {% if profile.campus == "北校园" %} selected {% endif %}>北校园</option>
@@ -22,8 +22,8 @@
                             <option value = "深圳校区" {% if profile.campus == "深圳校区" %} selected {% endif %}>深圳校区</option>
                             <option value = "未填写" {% if not profile.campus %} selected {% endif %}>未填写</option>
                         </select> </li>
-                        <li>入学：<input type = "date" name = "date" {% if not user.is_authenticated or  user.id != profile.user.id %} readonly {% endif %}  value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}"> </li>
-                        <li>个签：<input type = "text" name = "description" maxlength="50" {% if  not user.is_authenticated or  user.id != profile.user.id %} readonly {% endif %} value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}" ></li>
+                        <li>入学：<input type = "date" name = "date" {% if not user.is_authenticated or  user.id != profile.user.id %} readonly {% endif %}  value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}" style="height: 23px;"> </li>
+                        <li>个签：<input type = "text" name = "description" maxlength="50" {% if  not user.is_authenticated or  user.id != profile.user.id %} readonly {% endif %} value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}"  style="width: 147px;"></li>
                         {% if  user.is_authenticated and  user.id == profile.user.id %}
                             <li>头像：<input type="file" name = "avatar" accept="image/*"></li>
                             <li><input type="submit" value="修改"></li>
@@ -39,9 +39,10 @@
                         {% endif %}
                 </div>
             </div>
-            <ul id="middle_nav" class="clearfix">
+            <ul id="middle_nav" class="clearfix" style="position: relative; top: 17px;">
                 <li class="on"><a  href="javascript:;">正在出售的商品</a></li>
             </ul>
+            <br>
             <div id="my_products">
                 <div id="onsale_pro">
                     {% for goods in goodses %}

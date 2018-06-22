@@ -33,10 +33,9 @@
             div>input{color:#fff;background-color:rgb(0,123,255);border-color:rgb(0,123,255)}div>input.focus,div>input:focus{color:#fff;background-color:rgb(0,105,217);border-color:rgb(0,105,217)}div>input:hover{color:#fff;background-color:rgb(0,105,217);border-color:rgb(0,105,217)}div>input.active,div>input:active,.open>.dropdown-togglediv>input{color:#fff;background-color:#286090;border-color:#204d74}div>input.active.focus,div>input.active:focus,div>input.active:hover,div>input:active.focus,div>input:active:focus,div>input:active:hover,.open>.dropdown-togglediv>input.focus,.open>.dropdown-togglediv>input:focus,.open>.dropdown-togglediv>input:hover{color:#fff;background-color:rgb(0,105,217);border-color:#122b40}div>input.active,div>input:active,.open>.dropdown-togglediv>input{background-image:none}div>input.disabled.focus,div>input.disabled:focus,div>input.disabled:hover,div>input[disabled].focus,div>input[disabled]:focus,div>input[disabled]:hover,fieldset[disabled] div>input.focus,fieldset[disabled] div>input:focus,fieldset[disabled] div>input:hover{background-color:rgb(0,105,217);border-color:#2e6da4}div>input .badge{color:#337ab7;background-color:#fff}
             div>input{padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px;margin-top: 30px;}
         </style>
-
     </head>
 
-    <body>
+    <body >
     <div class="container">
         <div class = "row">
             <div class = "col-md-4"></div>
@@ -62,7 +61,7 @@
 
                 <!-- Provide a button to click to submit the form. -->
                 <input type="submit" name="submit" value="Register" class = "btn btn-lg btn-primary"/>
-                <p><a href="{% url 'login' %}">To Login</a> <a href="{% url 'index' %}">Go Back Home</a></p>
+                <p><a href="{% url 'login' %}">To Login</a> &nbsp;&nbsp;<a href="{% url 'index' %}">Go Back Home</a></p>
             </form>
 
             {% endif %}
