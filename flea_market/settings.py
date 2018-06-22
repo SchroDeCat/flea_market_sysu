@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for flea_market project.
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'market',
+    'dashboard',
 ]
 
 MIDDLEWARE = [

@@ -26,13 +26,20 @@
     <![endif]-->
     <style type="text/css">
       #message_content{
-        background-color: white;
+        border-bottom:4px dashed; 
       }
       body{
-        background-color: #D3D3D3;
+        font-family: 微软雅黑;
+        background-color: #D3D3D3 ;
       }
       #message_div{
-        background-color: white;
+        background-color: rgba(255,255,255,0.7);
+      }
+      #goods_link:hover{
+        color:rgb(253,166,36);
+        text-decoration: none;
+      }
+      #goods_link:{
       }
     </style>
 </head>
@@ -57,7 +64,7 @@
                         <li><a href="{% url 'about' %}">About</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
                          <li><a href=""><img src='{{ user_profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
-                        <li><a href="{% url 'profile' user_profile.pk %}" >{{ user_profile.user.username }}</a></li>
+                        <li><a href="{% url 'profile' user_profile.pk %}" id = "goos_link">{{ user_profile.user.username }}</a></li>
                     {% else %}
                         <li><a href="{% url 'register' %}">Register Here</a></li>
                         <li><a href="{% url 'login' %}">Login</a></li>
@@ -69,6 +76,7 @@
     </div>
 
     <div class="container-fluid">
+      <div class="row-md-2"></div>
       <div class="row">
 
         <div class="col-md-2">
@@ -78,9 +86,11 @@
         <div class="col-md-8  main" id = "message_div">
             {% for message in messages %}
                      <div id = "message_content">
-                     <h4>发送者：{{ message.sender }}</h4>
-                     <h4>发送内容：{{ message.content }}</h4>
-                     <h4>发送时间：{{ message.send_time }}</h4>
+                     <h3 style="color:#777;">{{ message.sender }}评论了你的商品<a href="{% url 'goods' message.item.id %}" style="font-size: 1.2em;"id = "goods_link">{{message.item.name}}</a>：</h4>
+                     <h2 style="text-align:left;width:90%;margin:40px;">{{ message.content }}</h2> 
+                   
+                     <h4 style = "text-align: right; color:#777;">{{ message.send_time }}</h4>
+                     
                    </div>
                      <br>
             {% endfor %}

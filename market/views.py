@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.shortcuts import render
 from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User, MarkedTable
 from market.forms import UserForm, UserProfieldForm, GoodsForm, CommentForm
@@ -102,6 +103,7 @@ def add_comment(request, goods_id):
             goods = Goods.objects.get(pk=goods_id)
             user = request.user
             user_profile = UserProfile.objects.get(user=user)
+            # add in comments and in_station_message
             comment.user = user_profile
             comment.goods = goods
             comment.save()
@@ -109,6 +111,7 @@ def add_comment(request, goods_id):
             message.sender = user_profile
             message.receiver = goods.seller
             message.content = comment.content
+            message.item = goods
             message.save()
             return goods_page(request,goods_id)
         else:
@@ -285,11 +288,15 @@ def search(request):
 def display_message(request):
     user = request.user
     user_profile = UserProfile.objects.get(user=user)
-    messages = InstationMessage.objects.filter(receiver=user_profile).order_by('-send_time')
+    messages = InstationMessage.objects.filter(receiver=user_profile, notification=False).order_by('-send_time')
+    print(messages)
+    goods_id = []
     for mes in messages:
         mes.active = False
+        # goods = Goods.objects.get(id=mes.item)
+        goods_id.append(mes.item)
         mes.save()
-    context_dic = {'user_profile': user_profile, 'messages':  messages}
+    context_dic = {'user_profile': user_profile, 'messages':  messages, 'goods_id': goods_id}
     return render(request, 'market/message.html', context_dic)
 
 
