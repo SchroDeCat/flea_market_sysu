@@ -21,7 +21,8 @@ urlpatterns = [
     url(r'^reset/(?P<active_code>.*)/$',        views.reset,name='reset'),
     url(r'^report/',                            views.report,name="report"),
     url(r'^self_profile/(?P<selector>[\w\-]+)', views.self_profile,name="self_profile" ),
-    url(r'^down_goods/$',                        views.down_goods,name="down_goods"),
+    url(r'^down_goods/$',                       views.down_goods,name="down_goods"),
+    url(r'^mark_goods/',                             views.mark,name="mark_goods"),
 
 ]   
 

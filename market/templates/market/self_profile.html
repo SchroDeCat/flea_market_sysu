@@ -29,7 +29,7 @@
              <form action="{% url 'self_profile' 'info' %}" method="post" enctype="multipart/form-data">
                  {% csrf_token %}
                     <ul class="seller_attr">
-                        <li>校区：<select  name="campus" >
+                        <li>校区：<select  name="campus" style="height: 23px;">
                             <option value = "东校园"  {% if profile.campus == "东校园" %} selected {% endif %}>东校园</option>
                             <option value = "南校园"  {% if profile.campus == "南校园" %} selected {% endif %}>南校园</option>
                             <option value = "北校园"  {% if profile.campus == "北校园" %} selected {% endif %}>北校园</option>
@@ -37,10 +37,10 @@
                             <option value = "深圳校区" {% if profile.campus == "深圳校区" %} selected {% endif %}>深圳校区</option>
                             <option value = "未填写" {% if not profile.campus %} selected {% endif %}>未填写</option>
                         </select> </li>
-                        <li>入学：<input type = "date" name = "date"   value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}"> </li>
-                        <li>个签：<input type = "text" name = "description" maxlength="50"  value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}" ></li>
-                            <li>头像：<input type="file" name = "avatar" accept="image/*"></li>
-                            <li><input type="submit" value="修改"></li>
+                        <li>入学：<input type = "date" name = "date"   value="{% if profile.date %}{{profile.date}}{% else %} 未填写 {% endif %}"> </li style="height: 23px;">
+                        <li>个签：<input type = "text" name = "description" maxlength="50"  value="{% if profile.description %}{{profile.description}}{% else %}未填写{% endif %}" style="width: 147px;"></li>
+                            <li>头像：<input type="file" name = "avatar" accept="image/*" style="display: inline-block;"></li>
+                            <li><input type="submit" value="修改" style="margin-left: 3em;"></li>
                     </ul>
              </form>
 
@@ -54,7 +54,8 @@
                             <h5>{{ goods.description }}</h5>
                             <div class="enshr_state">
                                 <span class="enshr_info_price">¥{{ goods.price }}</span>
-                                <span class="enshr_info_address">交易地点： {{ goods.trade_location }}</span><a href="javascript:void(0);"  name="control" id="{{ goods.pk }}" > {% if selector == 'on_sale' %} 下架 {% elif selector == 'marked'%} 收藏商品 {% else %} {% endif %}</a>
+                                <span class="enshr_info_address">交易地点： {{ goods.trade_location }}</span>
+                                <span style="font-size: 1.5em; float: right;position: relative;bottom: 40px;right: 60px;"><a href="javascript:void(0);"  name="control" id="{{ goods.pk }}" > {% if selector == 'on_sale' %} 下架 {% elif selector == 'marked'%} 取消收藏 {% else %} {% endif %}</a></span>
                             </div>
                         </div>
 
@@ -83,6 +84,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
 
+    {% if selector == 'on_sale' %}
         $('a[name="control"]').bind('click',function (e) {
             if(!confirm("确定下架该商品？")) return ;
             var temp = this;
@@ -96,9 +98,27 @@
                    }
                 }
             );
+        });
+
+    {% elif selector == 'marked'%}
+
+        $('a[name="control"]').bind('click',function (e) {
+            if(!confirm("确定取消收藏该商品？")) return ;
+            var temp = this;
+            $.post("{% url 'mark_goods' %}",{'g_id':this.id,'is_marked':1 },function(ret) {
+                   if(ret.res){
+                       alert("取消收藏成功");
+                       temp.innerHTML="已取消收藏";
+                   }
+                   else{
+                       alert("网络出现错误");
+                   }
+                }
+            );
         })
 
 
+    {% else %} {% endif %}
     </script>
 
 {% endblock %}

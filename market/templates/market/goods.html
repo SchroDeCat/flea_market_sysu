@@ -46,7 +46,7 @@
                         <li><a href="{% url 'about' %}">About</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
                          <li><a href=""><img src='{{ user_profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
-                        <li><a href="{% url 'profile' user.pk %}" >{{ user_profile.user.username }}</a></li>
+                        <li><a href="{% url 'self_profile' 'info' %}" >{{ user_profile.user.username }}</a></li>
                     {% else %}
                         <li><a href="{% url 'register' %}">Register Here</a></li>
                         <li><a href="{% url 'login' %}">Login</a></li>
@@ -131,7 +131,14 @@
 		                            <div class="value"><span class="real-time">{{ goods.publish_time }}</span></div>
 		                        </li>
 		                    </ul>
+                            {% if goods.on_sale and user.is_authenticated and user.pk != goods.seller.pk %}
+                                {% if not is_marked %}
+                                    <div class="complain"><a href="javascript:void(0);" id="mark"><h4>&bull;&nbsp;&nbsp;&nbsp;&nbsp;收藏&nbsp;&nbsp;&nbsp;&nbsp;&bull;</h4></a></div>
+                                {% else %}
+                                    <div class="complain"><a href="javascript:void(0);" id="mark"><h4>&bull;&nbsp;&nbsp;&nbsp;取消收藏&nbsp;&nbsp;&nbsp;&bull;</h4></a></div>
+                                {% endif %}
                             <div class="complain"><a href="javascript:void(0);" id="report"><h4>&bull;&nbsp;&nbsp;&nbsp;&nbsp;举报&nbsp;&nbsp;&nbsp;&nbsp;&bull;</h4></a></div>
+                            {% endif %}
        				</div>
            		</div>
 
@@ -226,6 +233,26 @@
                     else alert("举报成功");
                 }
             );
+        });
+
+        $('#mark').click(function () {
+            {% if not is_marked %}
+                var flag = 0;
+            {% else %}
+                var flag = 1;
+            {% endif %}
+            var temp = this;
+            $.post("{% url 'mark_goods' %}",{'g_id':{{goods.pk}},'is_marked':flag  },function(ret) {
+                    if(ret.res) {
+                        {% if not is_marked %}
+                            alert("收藏成功");
+                        {% else %}
+                            alert("取消收藏成功");
+                        {% endif %}
+                        window.location.reload()
+                    }
+                    else alert("网络连接失败");
+                });
         });
     </script>
   </body>

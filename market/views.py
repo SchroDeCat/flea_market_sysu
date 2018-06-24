@@ -76,15 +76,21 @@ def goods_page(request, goods_id):
     if request.user.is_authenticated:
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
+        is_marked = MarkedTable.objects.filter(user=user_profile)
     else:
         user_profile = []
+        is_marked = False
     comment_form = CommentForm()
     goods = Goods.objects.get(pk=goods_id)
     # record goods' seen times
     goods.seen_times += 1
     goods.save()
+    print("goods",is_marked)
+    if is_marked:
+        is_marked = is_marked.filter(goods = goods)
+
     comment_list = Comment.objects.filter(goods=goods)
-    context_dic = {'goods': goods, 'comments': comment_list, 'form': comment_form, 'user_profile': user_profile}
+    context_dic = {'goods': goods, 'comments': comment_list, 'form': comment_form, 'user_profile': user_profile,'is_marked':is_marked}
     return render(request, 'market/goods.html', context_dic)
 
 
@@ -243,7 +249,8 @@ def self_profile(request, selector):
         if selector == 'on_sale':
             goodses = Goods.objects.filter(seller=user_profile,on_sale=True).order_by('-publish_time')
         elif selector == 'marked':
-            goodses = MarkedTable.objects.filter(user=user_profile)
+            goodses = MarkedTable.objects.filter(user=user_profile).order_by("-mark_time").values("goods")
+            goodses = Goods.objects.filter(pk__in=goodses)
         elif selector == 'out_sale':
             goodses = Goods.objects.filter(seller=user_profile,on_sale=False).order_by('-down_time')
         elif selector == 'info':
@@ -261,7 +268,6 @@ def self_profile(request, selector):
             user_profile.save()
             user_profile = UserProfile.objects.get(user=user)
             user_profile.date = str(user_profile.date)
-            print('yes')
             return render(request, 'market/self_profile.html', {'profile':user_profile,'selector':selector})
 
 
@@ -354,16 +360,28 @@ def report(request):
         if(good.report_times >= 10):
             good.on_sale=False
             good.down_time=timezone.now()
-        good.save()
+            good.save()
+            good = Goods.objects.get(pk=good.pk)
+            comment = Comment()
+            comment.user = good.seller
+            comment.goods = good
+            comment.content = "[系统消息]您的商品: "+good.name+" 被多次举报不符合平台规范，已被强迫下架。如有疑问，请联系sysu_market@163.com."
+            comment.save()
+            message = InstationMessage()
+            message.sender = good.seller
+            message.receiver = good.seller
+            message.content = comment.content
+            message.item = good
+            print("message",message.item.pk)
+            message.save()
+        else:good.save()
         return_json = {'report_times':good.report_times}
-        print("times",good.report_times,good.down_time)
     else:return_json = {'report_times':-1}
     return HttpResponse(json.dumps(return_json), content_type='application/json')
 
 
 @csrf_exempt
 def down_goods(request):
-    print('yes')
     if(request.method == 'POST'):
         g_id = request.POST['g_id']
         good = Goods.objects.get(pk = g_id)
@@ -372,5 +390,22 @@ def down_goods(request):
         good.save()
         return_json = {'on_sale':good.on_sale}
     else:return_json = {'on_sale':True}
-    print(return_json)
     return HttpResponse(json.dumps(return_json), content_type='application/json')
+
+@csrf_exempt
+def mark(request):
+    if(request.method == 'POST'):
+        user = UserProfile.objects.get(user=request.user)
+        g_id = request.POST['g_id']
+        good = Goods.objects.get(pk = g_id)
+        is_marked = int( request.POST['is_marked'])
+
+        if( is_marked == 0):
+            mark_item = MarkedTable()
+            mark_item.goods = good
+            mark_item.user = user
+            mark_item.save()
+        else:
+            MarkedTable.objects.filter(user=user,goods=good).delete()
+        return HttpResponse(json.dumps({"res":True}), content_type='application/json')
+    else: return HttpResponse(json.dumps({"res":False}), content_type='application/json')

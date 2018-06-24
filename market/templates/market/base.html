@@ -42,6 +42,13 @@
       #user_name {
         font-weight: 700;
       }
+      .col-md-2 {
+          position: fixed;
+          right: 0px;
+      }
+      .container-fluid2 .row .col-md-6 {
+          margin-left: 65px;
+      }
     </style>
   </head>
 
@@ -112,15 +119,44 @@
         </div>
 
 
-        <div class="col-sm-2 col-sm-offset-10 col-md-3 col-md-offset-9 sidebar">
-           <div>
+        <!-- <div class="col-sm-2 col-sm-offset-10 col-md-3 col-md-offset-9 sidebar"> -->
+           <!-- <div>
                  {% block right_block %}{% endblock %}
+            </div> -->
+
+            <div class="col-md-2 col-md-offset-1 " style="background-color: #dedef8;">
+
+               <div class="container-fluid2">
+                  <div class="row" style="margin-top:10px;">
+                    <div class="col-md-6 col-md-offset-5" >
+                      <a href="{% url 'add_goods' %}" class="btn btn-primary btn-lg active" role="button" >我要发布</a>
+                    </div>
+                    
+                  </div>
+                </div>
+
+                  <div class="sidebar1-module sidebar-module-inset">
+                  <h4>About</h4>
+                  <p>We are devoted to provide best service for SYSUers!</p>
+                </div>
+                <div class="sidebar1-module">
+                  <h4>Link</h4>
+                  <ol class="list-unstyled">
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'index' %}">Index</a></li>
+
+                  </ol>
+                </div>
             </div>
-        </div>
+
+        <!-- </div> -->
 
 
       </div>
+     
+
     </div>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
