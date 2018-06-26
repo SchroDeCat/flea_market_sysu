@@ -124,7 +124,7 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/market/login/'
 MEDIA_URL = '/market/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'market/media/')
-
+STATIC_ROOT = os.path.join(BASE_DIR,'static/')
 
 DOMAIN='127.0.0.1:8000/'
 
