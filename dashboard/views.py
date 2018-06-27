@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from market.models import Category, Goods, UserProfile, Comment, InstationMessage, User, MarkedTable
+from market.models import Category, Goods, UserProfile, Comment, InstationMessage, MarkedTable
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import loader
@@ -49,9 +50,9 @@ def index(request):
     summary['avg_price'] = average_price
     summary['total_visiting_times'] = total_visiting
 
-    weekly_summary['new_items'] = Goods.object.filter(pulish_time__gt=last_week).count()
-    weekly_summary['new_sales'] = Goods.object.filter(down_time__gt=last_week).count()
-    weekly_summary['new_users'] = UserProfile.object.filter(date_joined__gt=last_week).count()
+    weekly_summary['new_items'] = Goods.objects.filter(publish_time__gt=last_week).count()
+    weekly_summary['new_sales'] = Goods.objects.filter(down_time__gt=last_week).count()
+    weekly_summary['new_users'] = User.objects.filter(date_joined__gt=last_week).count()
     weekly_summary['new_messages'] = InstationMessage.objects.filter(notification=False, send_time__gt = last_week).count()
 
     context_dic = {'Summary': summary}
