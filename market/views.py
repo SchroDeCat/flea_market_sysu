@@ -114,7 +114,8 @@ def add_comment(request, goods_id):
             message.save()
             return goods_page(request,goods_id)
         else:
-            # print(comment_form.errors)
+            print(comment_form.errors)
+            pass
     else:
         comment_form =CommentForm()
     return render(request, 'market/add_comment.html')
@@ -138,7 +139,8 @@ def add_goods(request):
             goods.save()
             return index(request)
         else:
-            # print(goods_form.errors)
+            print(goods_form.errors)
+            pass
     else:
         goods_form = GoodsForm()
 
@@ -175,7 +177,8 @@ def register(request):
             send_system_mail(request,email,'激活账号 For 用户：'+username,'market/activate_content',token=token,username=username)
             return activate(request)
         else:
-            # print(user_form.errors, profile_form.errors)
+            print(user_form.errors, profile_form.errors)
+            pass
     else:
         user_form = UserForm()
         profile_form = UserProfieldForm()
