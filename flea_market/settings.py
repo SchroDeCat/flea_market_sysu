@@ -126,7 +126,7 @@ MEDIA_URL = '/market/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'market/media/')
 STATIC_ROOT = os.path.join(BASE_DIR,'static/')
 
-DOMAIN='54.199.248.99:8000/'
+DOMAIN='sysufleastore.com/'
 
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
