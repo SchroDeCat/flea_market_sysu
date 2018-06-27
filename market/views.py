@@ -132,7 +132,7 @@ def add_goods(request):
             goods.seller = user_profile
             if 'picture' in request.FILES:
                 goods.picture = request.FILES['picture']
-            print(goods.picture)
+            # print(goods.picture)
             goods.on_sale=True
             goods.report_times=0
             goods.seen_times = 0
@@ -176,7 +176,7 @@ def register(request):
             send_system_mail(request,email,'激活账号 For 用户：'+username,'market/activate_content',token=token,username=username)
             return activate(request)
         else:
-            print(user_form.errors,profile_form.errors)
+            print(user_form.errors, profile_form.errors)
     else:
         user_form = UserForm()
         profile_form = UserProfieldForm()
