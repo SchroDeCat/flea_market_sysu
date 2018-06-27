@@ -331,6 +331,7 @@ def activate(request):
         result = '请尽快完成激活'
     return render(request,'market/activate.html',{'message':result})
 
+
 def forget(request):
     if request.method == 'POST':
         mail = request.POST['mail']
@@ -350,6 +351,7 @@ def forget(request):
     else:
         return render(request, 'market/forget.html')
 
+
 def reset(request,active_code):
     if request.method == 'POST':
         result = UserProfile.check_activate_token(active_code)
@@ -366,6 +368,7 @@ def reset(request,active_code):
             return render(request,'market/reset.html',{'message':'修改成功，请点击跳转'})
     else:
         return render(request,'market/reset.html',{'active_code':active_code})
+
 
 @csrf_exempt
 def report(request):
@@ -407,6 +410,7 @@ def down_goods(request):
         return_json = {'on_sale':good.on_sale}
     else:return_json = {'on_sale':True}
     return HttpResponse(json.dumps(return_json), content_type='application/json')
+
 
 @csrf_exempt
 def mark(request):
