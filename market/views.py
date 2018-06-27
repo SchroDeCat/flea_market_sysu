@@ -85,7 +85,6 @@ def goods_page(request, goods_id):
     # record goods' seen times
     goods.seen_times += 1
     goods.save()
-    print("goods",is_marked)
     if is_marked:
         is_marked = is_marked.filter(goods = goods)
 
@@ -115,7 +114,7 @@ def add_comment(request, goods_id):
             message.save()
             return goods_page(request,goods_id)
         else:
-            print(comment_form.errors)
+            # print(comment_form.errors)
     else:
         comment_form =CommentForm()
     return render(request, 'market/add_comment.html')
@@ -139,7 +138,7 @@ def add_goods(request):
             goods.save()
             return index(request)
         else:
-            print(goods_form.errors)
+            # print(goods_form.errors)
     else:
         goods_form = GoodsForm()
 
@@ -176,7 +175,7 @@ def register(request):
             send_system_mail(request,email,'激活账号 For 用户：'+username,'market/activate_content',token=token,username=username)
             return activate(request)
         else:
-            print(user_form.errors, profile_form.errors)
+            # print(user_form.errors, profile_form.errors)
     else:
         user_form = UserForm()
         profile_form = UserProfieldForm()
@@ -303,7 +302,7 @@ def display_message(request):
     user = request.user
     user_profile = UserProfile.objects.get(user=user)
     messages = InstationMessage.objects.filter(receiver=user_profile, notification=False).order_by('-send_time')
-    print(messages)
+    # print(messages)
     goods_id = []
     for mes in messages:
         mes.active = False
@@ -338,7 +337,7 @@ def forget(request):
         if user:
 
             email = user.email
-            print(email)
+            # print(email)
             username = user.username
             user_profile = UserProfile.objects.get(user=user)
             token = user_profile.generate_activate_token().decode('utf-8')
@@ -386,7 +385,7 @@ def report(request):
             message.receiver = good.seller
             message.content = comment.content
             message.item = good
-            print("message",message.item.pk)
+            # print("message",message.item.pk)
             message.save()
         else:good.save()
         return_json = {'report_times':good.report_times}
