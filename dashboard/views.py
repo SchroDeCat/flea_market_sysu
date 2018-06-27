@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import loader
 from django.http import HttpResponse
+from django.utils.timezone import now, timedelta
 
 
 # @staff_member_required
@@ -27,6 +28,8 @@ def gentella_html(request):
 @staff_member_required
 def index(request):
     summary = {}
+    weekly_summary = {}
+    last_week = now().data() - timedelta(days=-7)
     # Goods info
     goods = Goods.objects.all()
     total_price = 0
@@ -45,6 +48,11 @@ def index(request):
     summary['bulletin_amount'] = InstationMessage.objects.filter(notification=True).count()
     summary['avg_price'] = average_price
     summary['total_visiting_times'] = total_visiting
+
+    weekly_summary['new_items'] = Goods.object.filter(pulish_time__gt=last_week).count()
+    weekly_summary['new_sales'] = Goods.object.filter(down_time__gt=last_week).count()
+    weekly_summary['new_users'] = UserProfile.object.filter(date_joined__gt=last_week).count()
+    weekly_summary['new_messages'] = InstationMessage.objects.filter(notification=False, send_time__gt = last_week).count()
 
     context_dic = {'Summary': summary}
     return render(request, 'app/index4.html', context_dic)
