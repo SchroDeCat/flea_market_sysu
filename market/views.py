@@ -208,6 +208,20 @@ def about(request):
 
 
 @login_required
+def bulletin(request):
+    user = request.user
+    user_profile = UserProfile.objects.get(user=user)
+    messages = InstationMessage.objects.filter(receiver=user_profile, notification=True).order_by('-send_time')
+    goods_id = []
+    for mes in messages:
+        mes.active = False
+        goods_id.append(mes.item)
+        mes.save()
+    context_dic = {'user_profile': user_profile, 'messages':  messages, 'goods_id': goods_id}
+    return render(request, 'market/message.html', context_dic)
+
+
+@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/market/')
@@ -296,7 +310,7 @@ def display_message(request):
         # goods = Goods.objects.get(id=mes.item)
         goods_id.append(mes.item)
         mes.save()
-    context_dic = {'user_profile': user_profile, 'messages':  messages, 'goods_id': goods_id}
+    context_dic = {'user_profile': user_profile, 'messages':  messages, 'goods_id': goods_id, 'messages_amount': len(messages)}
     return render(request, 'market/message.html', context_dic)
 
 

@@ -61,7 +61,13 @@
           <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url 'index' %}">Home</a></li>
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'about' %}">About</a></li>
+                        {% if message_unread == 0 %}
+                            <li><a href="{% url 'message' %}">Message<span class="badge"></span></a></li>
+                        {% else %}
+                            <li><a href="{% url 'message' %}">Message<span class="badge">{{ message_unread }}</span></a></li>
+                        {% endif %}
+
+                        <li><a href="{% url 'bulletin' %}">Bulletin</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
                          <li><a href=""><img src='{{ user_profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
                         <li><a href="{% url 'profile' user_profile.pk %}" id = "goos_link">{{ user_profile.user.username }}</a></li>
@@ -84,16 +90,20 @@
 
 
         <div class="col-md-8  main" id = "message_div">
-            {% for message in messages %}
-                     <div id = "message_content">
-                     <h3 style="color:#777;">{{ message.sender }}评论了你的商品<a href="{% url 'goods' message.item.id %}" style="font-size: 1.2em;"id = "goods_link">{{message.item.name}}</a>：</h4>
-                     <h2 style="text-align:left;width:90%;margin:40px;">{{ message.content }}</h2> 
-                   
-                     <h4 style = "text-align: right; color:#777;">{{ message.send_time }}</h4>
-                     
-                   </div>
-                     <br>
-            {% endfor %}
+            {% if messages_amount > 0 %}
+                {% for message in messages %}
+                         <div id = "message_content">
+                         <h3 style="color:#777;">{{ message.sender }}评论了你的商品<a href="{% url 'goods' message.item.id %}" style="font-size: 1.2em;"id = "goods_link">{{message.item.name}}</a>：</h3>
+                         <h2 style="text-align:left;width:90%;margin:40px;">{{ message.content }}</h2>
+                         <h4 style = "text-align: right; color:#777;">{{ message.send_time }}</h4>
+                         </div>
+                         <br>
+                {% endfor %}
+            {% else %}
+                <div id = "no_message">
+                    <h2 style="color:#777;"> You have no message to read!</h2>
+                </div>
+            {% endif %}
 
         </div>
 

@@ -91,7 +91,7 @@
                             <li><a href="{% url 'message' %}">Message<span class="badge">{{ message_unread }}</span></a></li>
                         {% endif %}
 
-                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'bulletin' %}">Bulletin</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
                         <li><a href=""><img src='{{ user_profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
                         <li><a href="{% url 'self_profile' 'info' %}" >{{ user_profile.user.username }}</a></li>
@@ -138,12 +138,14 @@
                   <div class="sidebar1-module sidebar-module-inset">
                   <h4>About</h4>
                   <p>We are devoted to provide best service for SYSUers!</p>
+                  <p>With any problem or suggestions, feel free to contact us by sending e-mails to sysu_market@163.com!</p>
                 </div>
                 <div class="sidebar1-module">
                   <h4>Link</h4>
                   <ol class="list-unstyled">
                     <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li><a href="{% url 'index' %}">Index</a></li>
+
 
                   </ol>
                 </div>
