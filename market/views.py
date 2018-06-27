@@ -18,6 +18,7 @@ from PIL import Image
 # Create your views here.
 
 def index(request):
+    page_limit = 16
     if request.user.is_authenticated:
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
@@ -27,6 +28,8 @@ def index(request):
         message_unread = 0
     category_list = Category.objects.all()
     goods_list = Goods.objects.filter(on_sale=True).order_by('-publish_time')
+    if len(goods_list) > page_limit:
+        goods_list = goods_list[:page_limit]    # limit index display amount
     context_dic = {'categories': category_list,
                    'user_profile': user_profile,
                    'goodses': goods_list,
