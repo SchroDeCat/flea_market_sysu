@@ -4,6 +4,4 @@ from dashboard import views
 urlpatterns = [
     # The home page
     url(r'^$', views.index, name='dashboard'),
-    url(r'bulletin', views.index, name='bulletin'),
-
 ]
