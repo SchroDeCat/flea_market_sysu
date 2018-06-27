@@ -334,19 +334,19 @@ def activate(request):
 def forget(request):
     if request.method == 'POST':
         mail = request.POST['mail']
-        user = User.objects.filter(email=mail)[0]
-        if not user.is_active:
-            return render(request, 'market/activate.html', {'message': '请先完成账号激活'})
-        if user:
-
+        try:
+            user = User.objects.filter(email=mail)[0]
+            if not user.is_active:
+                return render(request, 'market/activate.html', {'message': '请先完成账号激活'})
             email = user.email
             # print(email)
             username = user.username
             user_profile = UserProfile.objects.get(user=user)
             token = user_profile.generate_activate_token().decode('utf-8')
             send_system_mail(request,email,'修改密码 For 用户：'+username,'market/forget_content',token=token,username=username)
-            return  render(request,'market/forget.html',{'success':'已发送密码重置邮件，请尽快查看并修改'})
-        return render(request,'market/forget.html',{'failed':'不存在此用户'})
+            return render(request,'market/forget.html',{'success':'已发送密码重置邮件，请尽快查看并修改'})
+        except BaseException as ex:
+            return render(request, 'market/forget.html', {'failed': '不存在此用户'})
     else:
         return render(request, 'market/forget.html')
 
