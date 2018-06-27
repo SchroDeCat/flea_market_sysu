@@ -77,14 +77,14 @@
                </li>
 
                 <li><a href="{% url 'index' %}">Home</a></li>
-                    {% if user.is_authenticated %}
+                  {% if user.is_authenticated %}
                         {% if message_unread == 0 %}
                             <li><a href="{% url 'message' %}">Message<span class="badge"></span></a></li>
                         {% else %}
                             <li><a href="{% url 'message' %}">Message<span class="badge">{{ message_unread }}</span></a></li>
                         {% endif %}
 
-                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'bulletin' %}">Bulletin</a></li>
                         <li><a href="{% url 'logout' %}?next=/rango/">Logout</a></li>
                         <li><a href=""><img src='{{ profile.avatar.url }}' style="width: 30px;height: 30px;" /></a> </li>
                         <li><a href="{% url 'self_profile' 'info' %}" >{{ profile.user.username }}</a></li>
