@@ -29,7 +29,7 @@ def gentella_html(request):
 def index(request):
     summary = {}
     weekly_summary = {}
-    last_week = now().data() - timedelta(days=-7)
+    last_week = now().date() - timedelta(days=-7)
     # Goods info
     goods = Goods.objects.all()
     total_price = 0
