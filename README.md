@@ -1,7 +1,7 @@
 # Guide
 
 This project is based on Django framework + Nginx Server. It is designed for students in Sun Yat-sen university who want to exchange the info about their idle assets online. For security reason, we are going to add e-mail verification, IP limitation and automatical check of the posed pictures using Ali APi to avoid porn or terroristic content.
-[Example Website](sysufleastore.com)
+Example Website: sysufleastore.com
 
 ## Environment & Requirements
 ```
