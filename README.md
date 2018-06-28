@@ -1,6 +1,7 @@
 # Guide
 
 This project is based on Django framework + Nginx Server. It is designed for students in Sun Yat-sen university who want to exchange the info about their idle assets online. For security reason, we are going to add e-mail verification, IP limitation and automatical check of the posed pictures using Ali APi to avoid porn or terroristic content.
+[Example Website](sysufleastore.com)
 
 ## Environment & Requirements
 ```
@@ -117,3 +118,5 @@ Use uwsgi to run the project on 80 port:
 ```console
 uwsgi --socket :8001  --chdir /home/ubuntu/flea_market_sysu/ --wsgi-file flea_market/wsgi.py --master --processes 1 --threads 1 --stats 127.0.0.1:9191
 ```
+# Contact
+With any problem, feel free to contact us either through github or sending e-mails to sysu_market@163.com.
