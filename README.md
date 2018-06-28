@@ -19,7 +19,7 @@ Take AWS basic ubuntu EC2 as example
 Nginx + uwsgi + django interact like this：
 web client<==>Nginx<==>socket<==>uwsgi<==>django
 
-###Python & pip
+### Python & pip
 
 
 ```console
@@ -32,14 +32,14 @@ ln -s /usr/bin/python3 /usr/bin/python
 sudo apt-get install python3-pip
 ln -s /usr/bin/pip3 /usr/bin/pip
 ```
-###Security Group
+### Security Group
 
 You should allow input and output in AWS console's security group setting.
 
-###Firewall
+### Firewall
 You should check ufw, iptables, firewalld configuration to avoid prohibition on necessary port.
 
-###uwsgi
+### uwsgi
 
 ```console
 pip install uwsgi
