@@ -40,20 +40,35 @@ def index(request):
         total_price += item.price
         total_visiting += item.seen_times
         # if item.down_time
-    average_price = total_price / len(goods)
 
-    summary['user_amount'] = UserProfile.objects.count()
-    summary['item_total_amount'] = Goods.objects.count()
-    summary['item_on_sale_amount'] = Goods.objects.filter(on_sale=True).count()
-    summary['messages_amount'] = InstationMessage.objects.filter(notification=False).count()
-    summary['bulletin_amount'] = InstationMessage.objects.filter(notification=True).count()
-    summary['avg_price'] = average_price
-    summary['total_visiting_times'] = total_visiting
+    try:
+        average_price = total_price / len(goods)
+        summary['user_amount'] = UserProfile.objects.count()
+        summary['item_total_amount'] = Goods.objects.count()
+        summary['item_on_sale_amount'] = Goods.objects.filter(on_sale=True).count()
+        summary['messages_amount'] = InstationMessage.objects.filter(notification=False).count()
+        summary['bulletin_amount'] = InstationMessage.objects.filter(notification=True).count()
+        summary['avg_price'] = average_price
+        summary['total_visiting_times'] = total_visiting
 
-    weekly_summary['new_items'] = Goods.objects.filter(publish_time__gt=last_week).count()
-    weekly_summary['new_sales'] = Goods.objects.filter(down_time__gt=last_week).count()
-    weekly_summary['new_users'] = User.objects.filter(date_joined__gt=last_week).count()
-    weekly_summary['new_messages'] = InstationMessage.objects.filter(notification=False, send_time__gt = last_week).count()
+        weekly_summary['new_items'] = Goods.objects.filter(publish_time__gt=last_week).count()
+        weekly_summary['new_sales'] = Goods.objects.filter(down_time__gt=last_week).count()
+        weekly_summary['new_users'] = User.objects.filter(date_joined__gt=last_week).count()
+        weekly_summary['new_messages'] = InstationMessage.objects.filter(notification=False,
+                                                                         send_time__gt = last_week).count()
+    except BaseException:
+        summary['user_amount'] = 0
+        summary['item_total_amount'] = 0
+        summary['item_on_sale_amount'] = 0
+        summary['messages_amount'] = 0
+        summary['bulletin_amount'] = 0
+        summary['avg_price'] = 0
+        summary['total_visiting_times'] = 0
 
-    context_dic = {'Summary': summary}
-    return render(request, 'app/index4.html', context_dic)
+        weekly_summary['new_items'] = 0
+        weekly_summary['new_sales'] = 0
+        weekly_summary['new_users'] = 0
+        weekly_summary['new_messages'] = 0
+    finally:
+        context_dic = {'Summary': summary}
+        return render(request, 'app/index4.html', context_dic)
